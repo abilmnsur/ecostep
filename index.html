@@ -8,25 +8,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; transition: all 0.3s ease; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+        body { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
         .eco-gradient { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        [data-lang] { transition: opacity 0.2s; }
+        .modal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .step-card:hover { transform: translateY(-10px); }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-50 text-slate-900 overflow-x-hidden">
 
     <nav class="fixed top-0 w-full z-50 glass border-b border-emerald-100">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
                 <i class="fas fa-leaf text-emerald-500 text-2xl"></i>
                 <span class="text-2xl font-extrabold tracking-tight text-emerald-600 italic">EcoStep</span>
             </div>
             
             <div class="hidden md:flex gap-8 font-semibold text-slate-600">
                 <a href="#about" data-key="nav_about" class="hover:text-emerald-500 transition">О проекте</a>
-                <a href="#map" data-key="nav_map" class="hover:text-emerald-500 transition">Эко-карта</a>
-                <a href="#rewards" data-key="nav_rewards" class="hover:text-emerald-500 transition">Бонусы</a>
+                <a href="#steps" data-key="nav_steps" class="hover:text-emerald-500 transition">Как это работает</a>
             </div>
 
             <div class="flex items-center gap-4">
@@ -34,59 +35,50 @@
                     <button onclick="setLanguage('ru')" id="btn-ru" class="px-3 py-1 rounded-lg text-xs font-bold transition-all bg-white shadow-sm">RU</button>
                     <button onclick="setLanguage('kz')" id="btn-kz" class="px-3 py-1 rounded-lg text-xs font-bold transition-all text-slate-400">KZ</button>
                 </div>
-                <button data-key="btn_join" class="eco-gradient text-white px-5 py-2 rounded-xl font-bold text-sm shadow-lg hover:scale-105 transition">Присоединиться</button>
+                <button onclick="toggleModal(true)" data-key="btn_join" class="eco-gradient text-white px-5 py-2 rounded-xl font-bold text-sm shadow-lg hover:scale-105 transition">Присоединиться</button>
             </div>
         </div>
     </nav>
 
     <header class="pt-44 pb-20 px-6">
         <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-            <div class="space-y-8">
+            <div class="space-y-8 text-center lg:text-left">
                 <div class="inline-block bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest" data-key="badge">Startup Kazakhstan 2026</div>
-                <h1 class="text-6xl md:text-7xl font-black leading-tight tracking-tighter" id="hero-title">
-                    Твои отходы — <br><span class="text-emerald-500 uppercase">валюта.</span>
-                </h1>
-                <p class="text-xl text-slate-500 max-w-lg font-medium" data-key="hero_desc">
-                    EcoStep — первая цифровая платформа, которая платит за ответственное отношение к природе.
-                </p>
-                <div class="flex items-center gap-6">
-                    <button class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-3 hover:bg-emerald-600 transition shadow-2xl group">
+                <h1 class="text-5xl md:text-7xl font-black leading-tight tracking-tighter" id="hero-title">Твои отходы — <br><span class="text-emerald-500 uppercase">валюта.</span></h1>
+                <p class="text-xl text-slate-500 max-w-lg mx-auto lg:mx-0 font-medium" data-key="hero_desc">EcoStep — первая цифровая платформа, которая платит за ответственное отношение к природе.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <button onclick="location.href='#steps'" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-emerald-600 transition shadow-2xl group">
                         <span data-key="btn_start">Начать менять мир</span>
                         <i class="fas fa-arrow-right group-hover:translate-x-2 transition"></i>
                     </button>
+                    <button onclick="toggleModal(true)" class="border-2 border-slate-200 px-8 py-4 rounded-2xl font-bold hover:bg-white transition" data-key="btn_reg_hero">Зарегистрироваться</button>
                 </div>
             </div>
 
-            <div class="relative">
-                <div class="absolute -inset-10 bg-emerald-400/20 blur-[100px] rounded-full"></div>
+            <div class="relative hidden lg:block">
+                <div class="absolute -inset-10 bg-emerald-400/20 blur-[100px] rounded-full animate-pulse"></div>
                 <div class="relative glass border-2 border-white p-8 rounded-[3rem] shadow-2xl">
                     <div class="flex justify-between items-center mb-10">
                         <div>
                             <p class="text-xs font-bold text-slate-400 uppercase" data-key="card_balance">Твой баланс</p>
                             <div class="text-4xl font-black text-slate-800">5,240 <span class="text-emerald-500 text-2xl">🌿</span></div>
                         </div>
-                        <div class="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center text-white text-xl shadow-lg shadow-emerald-200">
+                        <div class="w-14 h-14 eco-gradient rounded-2xl flex items-center justify-center text-white text-xl shadow-lg shadow-emerald-200">
                             <i class="fas fa-qrcode"></i>
                         </div>
                     </div>
                     <div class="space-y-4">
-                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-50 flex items-center justify-between">
+                        <div class="bg-white/80 p-4 rounded-2xl shadow-sm flex items-center justify-between border border-emerald-50">
                             <div class="flex items-center gap-4">
                                 <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center"><i class="fas fa-check"></i></div>
-                                <div>
-                                    <p class="font-bold text-sm" data-key="act_1">Пластик сдан</p>
-                                    <p class="text-xs text-slate-400">11.03.2026</p>
-                                </div>
+                                <div><p class="font-bold text-sm" data-key="act_1">Пластик сдан</p><p class="text-xs text-slate-400">11.03.2026</p></div>
                             </div>
                             <span class="font-bold text-emerald-600">+120</span>
                         </div>
-                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-50 flex items-center justify-between">
+                        <div class="bg-white/80 p-4 rounded-2xl shadow-sm flex items-center justify-between border border-slate-50">
                             <div class="flex items-center gap-4">
                                 <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center"><i class="fas fa-running"></i></div>
-                                <div>
-                                    <p class="font-bold text-sm" data-key="act_2">Эко-челлендж</p>
-                                    <p class="text-xs text-slate-400" data-key="status">В процессе</p>
-                                </div>
+                                <div><p class="font-bold text-sm" data-key="act_2">Эко-челлендж</p><p class="text-xs text-slate-400" data-key="status">В процессе</p></div>
                             </div>
                             <span class="font-bold text-slate-300">+500</span>
                         </div>
@@ -96,60 +88,162 @@
         </div>
     </header>
 
+    <section id="about" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="order-2 md:order-1">
+                    <h2 class="text-4xl font-black mb-6" data-key="about_title">О проекте</h2>
+                    <p class="text-slate-600 mb-8 leading-relaxed text-lg" data-key="about_text">
+                        EcoStep направлен на формирование экологического сознания через геймификацию. Мы решаем проблему низкой мотивации населения к сортировке отходов, создавая систему, где каждое действие приносит пользу и пользователю, и планете.
+                    </p>
+                    <div class="space-y-6">
+                        <div class="flex gap-4 p-4 rounded-2xl hover:bg-emerald-50 transition">
+                            <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shrink-0"><i class="fas fa-bullseye"></i></div>
+                            <div>
+                                <h4 class="font-bold text-xl" data-key="goal_title">Цель</h4>
+                                <p class="text-slate-500" data-key="goal_desc">Создать цифровую среду, мотивирующую людей внедрять эко-привычки в повседневную жизнь.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 p-4 rounded-2xl hover:bg-blue-50 transition">
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 shrink-0"><i class="fas fa-tasks"></i></div>
+                            <div>
+                                <h4 class="font-bold text-xl" data-key="task_title">Задачи</h4>
+                                <p class="text-slate-500" data-key="task_desc">Разработка IT-платформы, внедрение системы бонусов от партнеров и повышение уровня эко-культуры молодежи.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 md:order-2 bg-emerald-50 rounded-[3rem] p-12 aspect-square flex flex-col items-center justify-center text-center shadow-inner">
+                    <i class="fas fa-earth-americas text-[10rem] text-emerald-200 mb-6"></i>
+                    <p class="text-emerald-700 font-bold text-lg" data-key="about_stat">Будущее начинается с тебя</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="steps" class="py-24 bg-slate-900 text-white overflow-hidden relative">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 blur-[120px] rounded-full"></div>
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6" data-key="steps_title">Твой путь к эко-герою</h2>
+                <p class="text-emerald-400 font-bold uppercase tracking-widest text-sm" data-key="steps_subtitle">Всего 3 простых шага</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white/5 border border-white/10 p-10 rounded-[3rem] transition duration-300 step-card">
+                    <div class="text-5xl font-black text-emerald-500/30 mb-6 italic">01</div>
+                    <h3 class="text-2xl font-bold mb-4" data-key="step1_title">Сканируй</h3>
+                    <p class="text-slate-400 leading-relaxed" data-key="step1_desc">Открой камеру в приложении и наведи на упаковку. Наш AI определит тип материала за 0.5 сек.</p>
+                    <div class="mt-8 flex items-center gap-2 text-emerald-400 text-sm font-bold"><i class="fas fa-leaf"></i> <span>+10 Eco-points</span></div>
+                </div>
+                <div class="bg-white/5 border border-white/10 p-10 rounded-[3rem] transition duration-300 step-card">
+                    <div class="text-5xl font-black text-emerald-500/30 mb-6 italic">02</div>
+                    <h3 class="text-2xl font-bold mb-4" data-key="step2_title">Сдавай</h3>
+                    <p class="text-slate-400 leading-relaxed" data-key="step2_desc">Найди на карте ближайший пункт EcoStep и опусти туда отходы. Получи мгновенное подтверждение.</p>
+                    <div class="mt-8 flex items-center gap-2 text-emerald-400 text-sm font-bold"><i class="fas fa-map-marker-alt"></i> <span data-key="step2_bonus">Бонус за локацию</span></div>
+                </div>
+                <div class="bg-white/5 border border-white/10 p-10 rounded-[3rem] transition duration-300 step-card">
+                    <div class="text-5xl font-black text-emerald-500/30 mb-6 italic">03</div>
+                    <h3 class="text-2xl font-bold mb-4" data-key="step3_title">Меняй</h3>
+                    <p class="text-slate-400 leading-relaxed" data-key="step3_desc">Твои баллы превращаются в скидки на проезд, кофе или билеты. Ты меняешь мир и получаешь выгоду.</p>
+                    <div class="mt-8 flex items-center gap-2 text-emerald-400 text-sm font-bold"><i class="fas fa-gift"></i> <span data-key="step3_bonus">Реальные призы</span></div>
+                </div>
+            </div>
+            <div class="mt-20 p-8 bg-emerald-500 rounded-[2rem] flex flex-col md:row items-center justify-between gap-8 shadow-2xl">
+                <div class="text-center md:text-left"><h4 class="text-2xl font-black" data-key="impact_title">Наш общий вклад сегодня:</h4><p class="text-emerald-100 italic text-sm" data-key="impact_desc">Статистика обновляется в реальном времени</p></div>
+                <div class="flex gap-12"><div class="text-center"><div class="text-4xl font-black text-white">1.2т</div><p class="text-xs font-bold text-emerald-900/50 uppercase">Пластика</p></div><div class="text-center"><div class="text-4xl font-black text-white">840</div><p class="text-xs font-bold text-emerald-900/50 uppercase">Деревьев</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <div id="regModal" class="modal px-6">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-8 md:p-10 relative shadow-2xl">
+            <button onclick="toggleModal(false)" class="absolute top-6 right-6 text-slate-300 hover:text-slate-900 transition"><i class="fas fa-times text-xl"></i></button>
+            <h3 class="text-3xl font-black mb-2 text-slate-800" data-key="modal_title">Регистрация</h3>
+            <p class="text-slate-400 mb-8 text-sm font-medium" data-key="modal_subtitle">Стань частью эко-движения прямо сейчас</p>
+            <form class="space-y-4" onsubmit="event.preventDefault(); alert('Регистрация прошла успешно!'); toggleModal(false);">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" data-ph="ph_name" placeholder="Имя" required class="bg-slate-50 border border-slate-200 p-4 rounded-2xl w-full focus:outline-emerald-500">
+                    <input type="text" data-ph="ph_surname" placeholder="Фамилия" required class="bg-slate-50 border border-slate-200 p-4 rounded-2xl w-full focus:outline-emerald-500">
+                </div>
+                <input type="email" data-ph="ph_email" placeholder="E-mail" required class="bg-slate-50 border border-slate-200 p-4 rounded-2xl w-full focus:outline-emerald-500">
+                <div class="relative">
+                    <select class="bg-slate-50 border border-slate-200 p-4 rounded-2xl w-full focus:outline-emerald-500 appearance-none text-slate-500 font-medium">
+                        <option data-key="opt_city">Выберите город</option><option>Astana</option><option>Almaty</option><option>Karaganda</option><option>Shymkent</option>
+                    </select>
+                    <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none"></i>
+                </div>
+                <button type="submit" class="eco-gradient text-white w-full py-4 rounded-2xl font-black shadow-lg shadow-emerald-200 mt-4 uppercase tracking-widest text-sm" data-key="btn_reg">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="bg-slate-100 py-12 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="flex items-center gap-2"><i class="fas fa-leaf text-emerald-500 text-xl"></i><span class="font-extrabold text-slate-800">EcoStep</span></div>
+            <p class="text-slate-400 text-sm font-medium" data-key="footer_copy">© 2026 Startup Project. Все права защищены.</p>
+            <div class="flex gap-4"><div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 hover:text-emerald-500 shadow-sm cursor-pointer transition"><i class="fab fa-instagram"></i></div><div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 hover:text-emerald-500 shadow-sm cursor-pointer transition"><i class="fab fa-telegram-plane"></i></div></div>
+        </div>
+    </footer>
+
     <script>
         const translations = {
             ru: {
-                nav_about: "О проекте",
-                nav_map: "Эко-карта",
-                nav_rewards: "Бонусы",
-                btn_join: "Присоединиться",
-                badge: "Startup Kazakhstan 2026",
-                hero_title: 'Твои отходы — <br><span class="text-emerald-500 uppercase">валюта.</span>',
-                hero_desc: "EcoStep — первая цифровая платформа, которая платит за ответственное отношение к природе. Сортируй мусор и получай бонусы.",
-                btn_start: "Начать менять мир",
-                card_balance: "Твой баланс",
-                act_1: "Пластик сдан",
-                act_2: "Эко-челлендж",
-                status: "В процессе"
+                nav_about: "О проекте", nav_steps: "Как это работает", btn_join: "Присоединиться",
+                badge: "Startup Kazakhstan 2026", hero_title: 'Твои отходы — <br><span class="text-emerald-500 uppercase">валюта.</span>',
+                hero_desc: "EcoStep — первая цифровая платформа, которая платит за ответственное отношение к природе.",
+                btn_start: "Начать менять мир", btn_reg_hero: "Зарегистрироваться", card_balance: "Твой баланс",
+                act_1: "Пластик сдан", act_2: "Эко-челлендж", status: "В процессе",
+                about_title: "О проекте", about_text: "EcoStep направлен на формирование экологического сознания через геймификацию. Мы решаем проблему низкой мотивации населения к сортировке отходов, создавая систему, где каждое действие приносит пользу и пользователю, и планете.",
+                goal_title: "Цель", goal_desc: "Создать цифровую среду, мотивирующую людей внедрять эко-привычки в повседневную жизнь.",
+                task_title: "Задачи", task_desc: "Разработка IT-платформы, внедрение системы бонусов от партнеров и повышение уровня эко-культуры молодежи.",
+                about_stat: "Будущее начинается с тебя",
+                steps_title: "Твой путь к эко-герою", steps_subtitle: "Всего 3 простых шага",
+                step1_title: "Сканируй", step1_desc: "Открой камеру в приложении и наведи на упаковку. Наш AI определит тип материала за 0.5 сек.",
+                step2_title: "Сдавай", step2_desc: "Найди на карте ближайший пункт EcoStep и опусти туда отходы. Получи мгновенное подтверждение.",
+                step2_bonus: "Бонус за локацию", step3_title: "Меняй", step3_desc: "Твои баллы превращаются в скидки на проезд, кофе или билеты. Ты меняешь мир и получаешь выгоду.",
+                step3_bonus: "Реальные призы", impact_title: "Наш общий вклад сегодня:", impact_desc: "Статистика обновляется в реальном времени",
+                modal_title: "Регистрация", modal_subtitle: "Стань частью эко-движения прямо сейчас",
+                ph_name: "Имя", ph_surname: "Фамилия", ph_email: "E-mail", opt_city: "Выберите город", btn_reg: "Зарегистрироваться",
+                footer_copy: "© 2026 Startup Project. Все права защищены."
             },
             kz: {
-                nav_about: "Жоба туралы",
-                nav_map: "Эко-карта",
-                nav_rewards: "Бонустар",
-                btn_join: "Қосылу",
-                badge: "Startup Kazakhstan 2026",
-                hero_title: 'Сенің қалдықтарың — <br><span class="text-emerald-500 uppercase">валюта.</span>',
-                hero_desc: "EcoStep — табиғатқа жауапкершілікпен қарағаны үшін төлейтін алғашқы цифрлық платформа. Қоқысты сұрыптап, бонустар ал.",
-                btn_start: "Әлемді өзгертуді баста",
-                card_balance: "Сенің теңгерімің",
-                act_1: "Пластик өткізілді",
-                act_2: "Эко-челлендж",
-                status: "Жүруде"
+                nav_about: "Жоба туралы", nav_steps: "Бұл қалай жұмыс істейді", btn_join: "Қосылу",
+                badge: "Startup Kazakhstan 2026", hero_title: 'Сенің қалдықтарың — <br><span class="text-emerald-500 uppercase">валюта.</span>',
+                hero_desc: "EcoStep — табиғатқа жауапкершілікпен қарағаны үшін төлейтін алғашқы цифрлық платформа.",
+                btn_start: "Әлемді өзгертуді баста", btn_reg_hero: "Тіркелу", card_balance: "Сенің теңгерімің",
+                act_1: "Пластик өткізілді", act_2: "Эко-челлендж", status: "Жүруде",
+                about_title: "Жоба туралы", about_text: "EcoStep геймификация арқылы экологиялық сананы қалыптастыруға бағытталған. Біз әрбір әрекет пайдаланушыға да, планетаға да пайда әкелетін жүйе құра отырып, халықтың қалдықтарды сұрыптауға деген төмен мотивация мәселесін шешеміз.",
+                goal_title: "Мақсаты", goal_desc: "Адамдарды күнделікті өмірге эко-әдеттерді енгізуге ынталандыратын цифрлық орта құру.",
+                task_title: "Міндеттері", task_desc: "IT-платформаны әзірлеу, серіктестерден бонустар жүйесін енгізу және жастардың эко-мәдениетін арттыру.",
+                about_stat: "Болашақ сенен басталады",
+                steps_title: "Эко-батырға апаратын жол", steps_subtitle: "Бар болғаны 3 оңай қадам",
+                step1_title: "Сканерле", step1_desc: "Қосымшада камераны ашып, қаптамаға бағыттаңыз. Біздің AI материал түрін 0,5 секундта анықтайды.",
+                step2_title: "Өткіз", step2_desc: "Картадан ең жақын EcoStep фандоматын тауып, қалдықтарды салыңыз. Жылдам растау алыңыз.",
+                step2_bonus: "Локация үшін бонус", step3_title: "Алмастыр", step3_desc: "Сенің ұпайларың жолақыға, кофеге немесе билеттерге жеңілдікке айналады. Сен әлемді өзгертіп, пайда аласың.",
+                step3_bonus: "Нақты сыйлықтар", impact_title: "Бүгінгі ортақ үлесіміз:", impact_desc: "Статистика нақты уақытта жаңартылады",
+                modal_title: "Тіркелу", modal_subtitle: "Дәл қазір эко-қозғалыстың бір бөлігі бол",
+                ph_name: "Аты", ph_surname: "Жөні", ph_email: "E-mail", opt_city: "Қаланы таңдаңыз", btn_reg: "Тіркелу",
+                footer_copy: "© 2026 Startup Project. Барлық құқықтар қорғалған."
             }
         };
 
         function setLanguage(lang) {
-            // Update Text content
-            document.querySelectorAll('[data-key]').forEach(elem => {
-                const key = elem.getAttribute('data-key');
-                if (translations[lang][key]) {
-                    elem.innerText = translations[lang][key];
-                }
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[lang][key]) el.innerText = translations[lang][key];
             });
-
-            // Special handle for Hero Title (HTML)
+            document.querySelectorAll('[data-ph]').forEach(el => {
+                const key = el.getAttribute('data-ph');
+                if (translations[lang][key]) el.placeholder = translations[lang][key];
+            });
             document.getElementById('hero-title').innerHTML = translations[lang].hero_title;
+            document.getElementById('btn-ru').className = lang === 'ru' ? 'px-3 py-1 rounded-lg text-xs font-bold transition-all bg-white shadow-sm' : 'px-3 py-1 rounded-lg text-xs font-bold transition-all text-slate-400';
+            document.getElementById('btn-kz').className = lang === 'kz' ? 'px-3 py-1 rounded-lg text-xs font-bold transition-all bg-white shadow-sm' : 'px-3 py-1 rounded-lg text-xs font-bold transition-all text-slate-400';
+        }
 
-            // Update Buttons Style
-            document.getElementById('btn-ru').className = lang === 'ru' 
-                ? 'px-3 py-1 rounded-lg text-xs font-bold transition-all bg-white shadow-sm' 
-                : 'px-3 py-1 rounded-lg text-xs font-bold transition-all text-slate-400';
-            
-            document.getElementById('btn-kz').className = lang === 'kz' 
-                ? 'px-3 py-1 rounded-lg text-xs font-bold transition-all bg-white shadow-sm' 
-                : 'px-3 py-1 rounded-lg text-xs font-bold transition-all text-slate-400';
-            
-            document.documentElement.lang = lang;
+        function toggleModal(show) {
+            const modal = document.getElementById('regModal');
+            show ? modal.classList.add('active') : modal.classList.remove('active');
         }
     </script>
 </body>
