@@ -44,7 +44,7 @@
     <header class="pt-44 pb-20 px-6">
         <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
             <div class="space-y-8">
-                <h1 class="text-6xl font-black leading-tight" id="hero-title" data-key="hero_title">Твои отходы — <br><span class="text-emerald-500 uppercase">инвестиция.</span></h1>
+                <h1 class="text-6xl font-black leading-tight" data-key="hero_title">Твои отходы — <br><span class="text-emerald-500 uppercase">инвестиция.</span></h1>
                 <p class="text-xl text-slate-500 font-medium" data-key="hero_desc">EcoStep — сдавай вторсырье в школе и получай коины на реальные покупки.</p>
                 <button onclick="document.getElementById('events-section').scrollIntoView({behavior:'smooth'})" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-3 hover:bg-emerald-600 transition">
                     <span data-key="btn_start">Участвовать</span>
@@ -54,8 +54,8 @@
 
             <div class="relative hidden lg:block">
                 <div class="relative glass border-2 border-white p-10 rounded-[3rem] shadow-2xl text-center">
-                    <div id="qrcode" class="flex justify-center mb-6 p-4 bg-white rounded-2xl mx-auto w-40 h-40 items-center border shadow-inner text-slate-200 italic text-sm">
-                        Войдите для получения QR
+                    <div id="qrcode" class="flex justify-center mb-6 p-4 bg-white rounded-2xl mx-auto w-40 h-40 items-center border shadow-inner">
+                        <i class="fas fa-qrcode text-slate-200 text-5xl"></i>
                     </div>
                     <p class="text-xs font-bold text-slate-400 uppercase" data-key="balance_label">Баланс коинов</p>
                     <div class="text-5xl font-black text-slate-800"><span id="user-balance">0</span> <span class="text-emerald-500 text-3xl">🌿</span></div>
@@ -67,7 +67,7 @@
     <section id="about" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-6">
             <h2 class="text-4xl font-black mb-6" data-key="about_title">О проекте</h2>
-            <p class="text-slate-600 text-lg max-w-3xl" data-key="about_text">Мы создаем культуру переработки в школах Казахстана. Каждый сданный предмет — это вклад в экологию и твой личный счет.</p>
+            <p class="text-slate-600 text-lg max-w-3xl" data-key="about_text">Мы создаем культуру переработки в школах Казахстана. Каждый сданный предмет — это вклад в экологию.</p>
         </div>
     </section>
 
@@ -75,42 +75,28 @@
         <div class="max-w-7xl mx-auto px-6">
             <h2 class="text-4xl font-black mb-10" data-key="events_title">Актуальные сборы</h2>
             <div id="events-list" class="grid md:grid-cols-3 gap-6">
-                <p class="col-span-3 text-center py-10 text-slate-400 italic" data-key="loading">Загрузка мероприятий...</p>
-            </div>
+                </div>
         </div>
     </section>
 
     <section id="steps" class="py-24 bg-slate-900 text-white text-center">
         <div class="max-w-7xl mx-auto px-6">
             <h2 class="text-4xl font-black mb-12" data-key="steps_title">Как это работает?</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="p-8 bg-white/5 rounded-3xl border border-white/10 italic" data-key="step1">Принеси сырье волонтеру</div>
-                <div class="p-8 bg-white/5 rounded-3xl border border-white/10 italic" data-key="step2">Сканируй свой QR-код</div>
-                <div class="p-8 bg-white/5 rounded-3xl border border-white/10 italic" data-key="step3">Получай баллы на счет</div>
+            <div class="grid md:grid-cols-3 gap-8 italic">
+                <div class="p-8 bg-white/5 rounded-3xl border border-white/10" data-key="step1">Принеси сырье волонтеру</div>
+                <div class="p-8 bg-white/5 rounded-3xl border border-white/10" data-key="step2">Сканируй свой QR-код</div>
+                <div class="p-8 bg-white/5 rounded-3xl border border-white/10" data-key="step3">Получай баллы на счет</div>
             </div>
         </div>
     </section>
 
-    <div id="regModal" class="modal px-6">
-        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-10 relative shadow-2xl">
-            <button onclick="toggleModal(false)" class="absolute top-6 right-6 text-slate-300"><i class="fas fa-times text-xl"></i></button>
-            <h3 class="text-3xl font-black mb-6" data-key="modal_head">Вход</h3>
-            <form id="auth-form" class="space-y-4">
-                <input type="text" id="reg-name" placeholder="Имя" class="bg-slate-50 border p-4 rounded-2xl w-full">
-                <input type="email" id="reg-email" placeholder="E-mail" required class="bg-slate-50 border p-4 rounded-2xl w-full">
-                <input type="password" id="reg-password" placeholder="Пароль" required class="bg-slate-50 border p-4 rounded-2xl w-full">
-                <button type="submit" class="eco-gradient text-white w-full py-4 rounded-2xl font-black uppercase" data-key="btn_submit">Войти</button>
-            </form>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "ТВОЙ_ID",
+            apiKey: "ТВОЙ_КЛЮЧ",
             authDomain: "ecostep-dfc99.firebaseapp.com",
             projectId: "ecostep-dfc99",
             storageBucket: "ecostep-dfc99.appspot.com",
@@ -119,10 +105,9 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        // СЛОВАРЬ ПЕРЕВОДОВ
         const translations = {
             ru: {
                 nav_about: "О проекте", nav_steps: "Как это работает", nav_events: "Мероприятия",
@@ -130,9 +115,8 @@
                 hero_desc: "EcoStep — сдавай вторсырье в школе и получай коины на реальные покупки.",
                 btn_start: "Участвовать", balance_label: "Баланс коинов", about_title: "О проекте",
                 about_text: "Мы создаем культуру переработки в школах Казахстана. Каждый сданный предмет — это вклад в экологию.",
-                events_title: "Актуальные сборы", loading: "Загрузка мероприятий...",
-                steps_title: "Как это работает?", step1: "Принеси сырье волонтеру", step2: "Сканируй свой QR-код", step3: "Получай баллы на счет",
-                modal_head: "Вход", btn_submit: "Войти"
+                events_title: "Актуальные сборы", steps_title: "Как это работает?", 
+                step1: "Принеси сырье волонтеру", step2: "Сканируй свой QR-код", step3: "Получай баллы на счет"
             },
             kz: {
                 nav_about: "Жоба туралы", nav_steps: "Бұл қалай жұмыс істейді", nav_events: "Шаралар",
@@ -140,9 +124,8 @@
                 hero_desc: "EcoStep — мектепте қайталама шикізат тапсырып, нақты заттарға коиндар ал.",
                 btn_start: "Қатысу", balance_label: "Коиндар балансы", about_title: "Жоба туралы",
                 about_text: "Біз Қазақстан мектептерінде қайта өңдеу мәдениетін қалыптастырамыз. Әрбір тапсырылған зат — экологияға үлес.",
-                events_title: "Белсенді жиындар", loading: "Шаралар жүктелуде...",
-                steps_title: "Бұл қалай жұмыс істейді?", step1: "Шикізатты еріктіге әкел", step2: "Өзіңнің QR-кодыңды сканерле", step3: "Шотқа ұпайларды ал",
-                modal_head: "Кіру", btn_submit: "Кіру"
+                events_title: "Белсенді жиындар", steps_title: "Бұл қалай жұмыс істейді?", 
+                step1: "Шикізатты еріктіге әкел", step2: "Өзіңнің QR-кодыңды сканерле", step3: "Шотқа ұпайларды ал"
             }
         };
 
@@ -151,14 +134,11 @@
         window.changeLang = (lang) => {
             currentLang = lang;
             const dict = translations[lang];
-            
-            // Замена всех текстов с data-key
             document.querySelectorAll('[data-key]').forEach(el => {
                 const key = el.getAttribute('data-key');
                 if(dict[key]) el.innerHTML = dict[key];
             });
-
-            // Кнопки переключения
+            
             document.getElementById('btn-ru').className = lang === 'ru' ? "px-3 py-1 rounded-lg text-xs font-bold bg-white shadow-sm" : "px-3 py-1 rounded-lg text-xs font-bold text-slate-400";
             document.getElementById('btn-kz').className = lang === 'kz' ? "px-3 py-1 rounded-lg text-xs font-bold bg-white shadow-sm" : "px-3 py-1 rounded-lg text-xs font-bold text-slate-400";
             
@@ -171,39 +151,38 @@
                 const q = query(collection(db, "events"), where("status", "==", "active"));
                 const snap = await getDocs(q);
                 list.innerHTML = '';
+                
                 if (snap.empty) {
-                    list.innerHTML = `<p class="col-span-3 text-center text-slate-400 italic">${currentLang === 'ru' ? 'Активных сборов нет' : 'Белсенді жиындар жоқ'}</p>`;
+                    list.innerHTML = `<p class="col-span-3 text-center text-slate-400">${currentLang === 'ru' ? 'Активных сборов нет' : 'Белсенді жиындар жоқ'}</p>`;
                     return;
                 }
-                snap.forEach(doc => {
-                    const d = doc.data();
+
+                snap.forEach(docSnap => {
+                    const d = docSnap.data();
+                    // Защита от undefined: если поля нет, выводим пустую строку или текст по умолчанию
+                    const title = currentLang === 'ru' ? (d.title_ru || "Без названия") : (d.title_kz || "Атаусыз");
+                    const reward = currentLang === 'ru' ? (d.reward_info_ru || "0") : (d.reward_info_kz || "0");
+                    const date = d.date || "14.05";
+
                     list.innerHTML += `
-                        <div class="bg-white p-8 rounded-[2.5rem] border border-emerald-100 shadow-sm">
-                            <div class="text-emerald-500 font-bold text-xs mb-3 uppercase tracking-widest">${d.date}</div>
-                            <h4 class="font-black text-xl mb-4">${currentLang === 'ru' ? d.title_ru : d.title_kz}</h4>
+                        <div class="bg-white p-8 rounded-[2.5rem] border border-emerald-100 shadow-sm hover:shadow-md transition">
+                            <div class="text-emerald-500 font-bold text-xs mb-3 uppercase tracking-widest">${date}</div>
+                            <h4 class="font-black text-xl mb-4">${title}</h4>
                             <div class="bg-emerald-50 p-4 rounded-2xl flex justify-between items-center italic">
                                 <span class="text-xs font-bold text-emerald-800 uppercase">COINS</span>
-                                <span class="font-black text-emerald-600">${currentLang === 'ru' ? d.reward_info_ru : d.reward_info_kz}</span>
+                                <span class="font-black text-emerald-600">${reward}</span>
                             </div>
                         </div>
                     `;
                 });
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Ошибка:", e); }
         }
 
-        window.toggleModal = (show) => {
-            document.getElementById('regModal').classList.toggle('active', show);
-        };
-
-        // Логика авторизации и Firebase (остается прежней)
-        // ... (auth listener, submit form и т.д.) ...
-        
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if (userDoc.exists()) {
-                    document.getElementById('user-balance').innerText = userDoc.data().coins;
-                    document.getElementById('auth-btn').innerText = currentLang === 'ru' ? "Профиль" : "Профиль";
+                    document.getElementById('user-balance').innerText = userDoc.data().coins || 0;
                     document.getElementById('qrcode').innerHTML = "";
                     new QRCode(document.getElementById("qrcode"), { text: user.uid, width: 140, height: 140 });
                 }
