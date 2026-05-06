@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoStep — Панель Продавца</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Библиотека сканера -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center p-6">
+
+    <div class="w-full max-w-md bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl border border-slate-700">
+        <h1 class="text-2xl font-black mb-6 text-center text-emerald-400 uppercase tracking-widest">Сканер EcoStep</h1>
+        
+        <!-- Окно камеры -->
+        <div id="reader" class="overflow-hidden rounded-3xl bg-black mb-6 border-2 border-slate-600"></div>
+
+        <!-- Информация о пользователе -->
+        <div id="user-info" class="hidden space-y-4 bg-slate-700 p-6 rounded-2xl border border-emerald-500/30">
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase">Покупатель</p>
+                <p id="customer-name" class="text-xl font-bold text-emerald-400">---</p>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase">Баланс</p>
+                <p class="text-2xl font-black"><span id="customer-balance">0</span> 🌿</p>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-600">
+                <input type="number" id="spend-amount" placeholder="Сумма списания" class="w-full p-4 rounded-xl bg-slate-800 border border-slate-500 text-white mb-4 outline-none focus:border-emerald-500">
+                <button id="confirm-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 rounded-xl shadow-lg transition">ПОДТВЕРДИТЬ СПИСАНИЕ</button>
+            </div>
+        </div>
+
+        <div id="status-msg" class="text-center text-slate-400 text-sm mt-4 italic">Наведите камеру на QR-код ученика</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "ТВОЙ_КЛЮЧ",
+            authDomain: "ecostep-dfc99.firebaseapp.com",
+            projectId: "ecostep-dfc99",
+            storageBucket: "ecostep-dfc99.appspot.com",
+            messagingSenderId: "ID",
+            appId: "APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let currentUserId = null;
+
+        // Инициализация сканера
+        const html5QrCode = new Html5Qrcode("reader");
+        
+        const qrConfig = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+        html5QrCode.start({ facingMode: "environment" }, qrConfig, onScanSuccess);
+
+        async function onScanSuccess(decodedText) {
+            // Чтобы не срабатывало много раз подряд
+            if (currentUserId === decodedText) return; 
+            
+            currentUserId = decodedText;
+            document.getElementById('status-msg').innerText = "Загрузка данных пользователя...";
+
+            try {
+                const userRef = doc(db, "users", decodedText);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    const data = userSnap.data();
+                    document.getElementById('customer-name').innerText = data.firstName + " " + (data.lastName || "");
+                    document.getElementById('customer-balance').innerText = data.coins;
+                    document.getElementById('user-info').classList.remove('hidden');
+                    document.getElementById('status-msg').innerText = "Пользователь найден!";
+                } else {
+                    alert("Пользователь не найден в базе!");
+                    currentUserId = null;
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Ошибка при поиске пользователя.");
+            }
+        }
+
+        // Логика списания
+        document.getElementById('confirm-btn').addEventListener('click', async () => {
+            const amount = parseInt(document.getElementById('spend-amount').value);
+            const currentBalance = parseInt(document.getElementById('customer-balance').innerText);
+
+            if (!amount || amount <= 0) return alert("Введите корректную сумму");
+            if (amount > currentBalance) return alert("Недостаточно коинов!");
+
+            try {
+                const userRef = doc(db, "users", currentUserId);
+                await updateDoc(userRef, {
+                    coins: increment(-amount)
+                });
+
+                alert("Успешно списано " + amount + " коинов!");
+                
+                // Сброс формы
+                document.getElementById('user-info').classList.add('hidden');
+                document.getElementById('spend-amount').value = "";
+                currentUserId = null;
+                document.getElementById('status-msg').innerText = "Ожидание следующего кода...";
+            } catch (e) {
+                alert("Ошибка при списании!");
+            }
+        });
+    </script>
+</body>
+</html>
