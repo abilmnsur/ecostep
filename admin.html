@@ -3,54 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoStep — Панель Продавца</title>
+    <title>EcoStep — Терминал Продавца</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #0f172a; }
-        .scanner-box #reader { border: none !important; }
-        .scanner-box video { border-radius: 1.5rem; object-fit: cover; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; }
+        #reader { border: none !important; }
+        #reader video { border-radius: 2rem; object-fit: cover; }
+        /* Убираем стрелочки у input number */
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
-<body class="text-white min-h-screen flex flex-col items-center p-6">
+<body class="text-white min-h-screen flex flex-col items-center p-4">
 
-    <div class="w-full max-w-md bg-slate-800 p-8 rounded-[3rem] shadow-2xl border border-slate-700 mt-10">
-        <div class="flex items-center justify-center gap-3 mb-8">
-            <i class="fas fa-shield-check text-emerald-500 text-2xl"></i>
-            <h1 class="text-xl font-black uppercase tracking-widest text-emerald-400">EcoStep Admin</h1>
+    <div class="w-full max-w-md bg-slate-800 p-8 rounded-[3rem] shadow-2xl border border-slate-700 mt-6">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-leaf text-emerald-500"></i>
+                <span class="font-black uppercase tracking-widest text-sm text-slate-400">EcoStep Terminal</span>
+            </div>
+            <div id="status-dot" class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
         </div>
         
-        <div class="scanner-box relative overflow-hidden rounded-[2rem] bg-black mb-6 border-2 border-slate-600 shadow-inner">
-            <div id="reader" style="width: 100%;"></div>
+        <div id="scanner-container" class="relative overflow-hidden rounded-[2.5rem] bg-black mb-6 border-2 border-slate-700 aspect-square flex items-center justify-center">
+            <div id="reader" class="w-full"></div>
+            <div id="scanner-placeholder" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 z-10">
+                <i class="fas fa-qrcode text-5xl text-slate-700 mb-4"></i>
+                <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Наведите на QR код</p>
+            </div>
         </div>
 
-        <div id="user-info" class="hidden space-y-6 animate-pulse">
-            <div class="bg-slate-700/50 p-6 rounded-3xl border border-emerald-500/30">
-                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Покупатель</p>
-                <p id="customer-name" class="text-2xl font-black text-white">---</p>
-                <div class="flex justify-between items-end mt-4">
-                    <div>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">Текущий баланс</p>
-                        <p class="text-3xl font-black text-emerald-400"><span id="customer-balance">0</span> 🌿</p>
-                    </div>
-                </div>
+        <div id="user-info" class="hidden space-y-6">
+            <div class="bg-slate-900/50 p-6 rounded-3xl border border-slate-700 text-center">
+                <p class="text-[10px] font-bold text-slate-500 uppercase mb-1">Клиент</p>
+                <p id="customer-name" class="text-xl font-black text-white">---</p>
+                <p class="text-emerald-400 text-sm font-bold mt-1">Доступно: <span id="customer-balance">0</span> 🌿</p>
             </div>
             
-            <div class="space-y-4">
-                <input type="number" id="spend-amount" placeholder="Сумма списания" 
-                    class="w-full p-5 rounded-2xl bg-slate-900 border border-slate-600 text-white text-xl font-bold outline-none focus:border-emerald-500 transition-all">
+            <div class="space-y-6">
+                <div class="relative group">
+                    <input type="number" id="spend-amount" value="0" 
+                        class="w-full bg-transparent border-b-2 border-slate-600 text-center text-6xl font-black py-4 outline-none focus:border-blue-500 transition-all text-white"
+                        onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'">
+                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-2xl font-bold text-slate-600">🌿</span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="setAmount(10)" class="bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition">10</button>
+                    <button onclick="setAmount(50)" class="bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition">50</button>
+                    <button onclick="setAmount(100)" class="bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition">100</button>
+                    <button onclick="setAmount(200)" class="bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition">200</button>
+                    <button onclick="setAmount(500)" class="bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold transition">500</button>
+                    <button onclick="document.getElementById('spend-amount').value='0'" class="bg-red-500/10 text-red-500 py-3 rounded-xl font-bold hover:bg-red-500/20 transition">C</button>
+                </div>
                 
-                <button id="confirm-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-5 rounded-2xl shadow-lg transition-all active:scale-95 uppercase tracking-widest">
-                    Подтвердить списание
+                <button id="confirm-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-[2rem] shadow-xl shadow-blue-900/20 transition-all active:scale-95 uppercase tracking-widest text-sm">
+                    Списать с баланса
                 </button>
                 
-                <button onclick="resetScanner()" class="w-full text-slate-400 font-bold py-2 text-sm uppercase">Отмена</button>
+                <button onclick="resetScanner()" class="w-full text-slate-500 font-bold py-2 text-xs uppercase tracking-widest">Сканировать другого</button>
             </div>
         </div>
 
-        <div id="status-msg" class="text-center text-slate-500 text-sm italic mt-4">
-            <i class="fas fa-camera mr-2"></i> Ожидание QR-кода...
+        <div id="status-msg" class="text-center text-slate-600 text-[10px] uppercase font-bold tracking-widest mt-6">
+            Terminal Ready
         </div>
     </div>
 
@@ -58,8 +76,8 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ВАЖНО: Вставь те же данные, что и в index.html
-        const firebaseConfig = {
+        // ВАЖНО: Вставь те же данные, что в index.html
+       const firebaseConfig = {
   apiKey: "AIzaSyBGBtCmbJ_c54hsomEEFT5UlIC-ax3K7mI",
   authDomain: "ecostep-dfc99.firebaseapp.com",
   databaseURL: "https://ecostep-dfc99-default-rtdb.europe-west1.firebasedatabase.app",
@@ -76,16 +94,30 @@
         let currentUserId = null;
         const html5QrCode = new Html5Qrcode("reader");
 
+        // Функции для глобального доступа
+        window.setAmount = (val) => {
+            document.getElementById('spend-amount').value = val;
+        };
+
+        window.resetScanner = () => {
+            currentUserId = null;
+            document.getElementById('user-info').classList.add('hidden');
+            document.getElementById('scanner-placeholder').classList.remove('hidden');
+            document.getElementById('spend-amount').value = "0";
+            document.getElementById('status-msg').innerText = "Terminal Ready";
+            document.getElementById('status-dot').classList.replace('bg-emerald-500', 'bg-red-500');
+        };
+
         // Запуск камеры
-        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-        html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess);
+        const qrConfig = { fps: 15, qrbox: { width: 250, height: 250 } };
+        html5QrCode.start({ facingMode: "environment" }, qrConfig, onScanSuccess);
 
         async function onScanSuccess(decodedText) {
-            if (currentUserId === decodedText) return;
+            if (currentUserId) return; // Не сканируем, если уже открыт профиль
             
             currentUserId = decodedText;
-            document.getElementById('status-msg').innerText = "Поиск в базе...";
-
+            document.getElementById('scanner-placeholder').classList.add('hidden');
+            
             try {
                 const userRef = doc(db, "users", decodedText);
                 const userSnap = await getDoc(userRef);
@@ -96,13 +128,12 @@
                     document.getElementById('customer-balance').innerText = data.coins;
                     
                     document.getElementById('user-info').classList.remove('hidden');
-                    document.getElementById('user-info').classList.remove('animate-pulse');
-                    document.getElementById('status-msg').innerText = "Пользователь найден!";
+                    document.getElementById('status-msg').innerText = "User Identified";
+                    document.getElementById('status-dot').classList.replace('bg-red-500', 'bg-emerald-500');
                     
-                    // Виброотклик (если поддерживается)
                     if (navigator.vibrate) navigator.vibrate(100);
                 } else {
-                    alert("Пользователь не найден!");
+                    alert("Ошибка: Пользователь не найден в базе!");
                     resetScanner();
                 }
             } catch (e) {
@@ -111,19 +142,13 @@
             }
         }
 
-        window.resetScanner = () => {
-            currentUserId = null;
-            document.getElementById('user-info').classList.add('hidden');
-            document.getElementById('spend-amount').value = "";
-            document.getElementById('status-msg').innerText = "Ожидание QR-кода...";
-        };
-
+        // Логика списания
         document.getElementById('confirm-btn').addEventListener('click', async () => {
             const amount = parseInt(document.getElementById('spend-amount').value);
             const balance = parseInt(document.getElementById('customer-balance').innerText);
 
-            if (!amount || amount <= 0) return alert("Введите сумму");
-            if (amount > balance) return alert("Недостаточно баллов!");
+            if (!amount || amount <= 0) return alert("Введите сумму больше 0");
+            if (amount > balance) return alert("Недостаточно баллов на балансе клиента!");
 
             try {
                 const userRef = doc(db, "users", currentUserId);
@@ -131,10 +156,10 @@
                     coins: increment(-amount)
                 });
 
-                alert("Списано успешно!");
+                alert(`Успешно списано ${amount} 🌿`);
                 resetScanner();
             } catch (e) {
-                alert("Ошибка списания!");
+                alert("Ошибка транзакции! Проверьте интернет.");
             }
         });
     </script>
