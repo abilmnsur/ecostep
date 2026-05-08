@@ -166,14 +166,18 @@
                     <h2 class="text-3xl font-black tracking-tight" data-key="reg_title">Вход в систему</h2>
                     <p class="text-slate-500 text-sm mt-2" data-key="reg_desc">Введи данные, чтобы увидеть свой баланс</p>
                 </div>
-                <div class="space-y-4">
-                    <input type="text" id="user-name" data-placeholder="ph_name" placeholder="Твое имя" class="w-full p-5 bg-slate-100 rounded-3xl border-none outline-none font-bold">
-                    <input type="text" id="user-phone" data-placeholder="ph_phone" placeholder="Номер телефона" class="w-full p-5 bg-slate-100 rounded-3xl border-none outline-none font-bold">
-                    <button id="auth-btn" class="w-full bg-slate-900 text-white py-5 rounded-3xl font-black text-lg hover:bg-emerald-600 transition shadow-xl" data-key="reg_btn">
-                        Войти / Создать
-                    </button>
-                </div>
-            </div>
+                <div id="regModal" class="modal px-6">
+        <div class="bg-white w-full max-w-md rounded-[3rem] p-10 relative shadow-2xl scale-in">
+            <button onclick="toggleModal(false)" class="absolute top-8 right-8 text-slate-300 hover:text-black transition"><i class="fas fa-times text-2xl"></i></button>
+            <h3 class="text-3xl font-black mb-8" data-key="modal_head">Регистрация</h3>
+            <form id="auth-form" class="space-y-4">
+                <input type="text" id="reg-name" data-placeholder="ph_name" placeholder="Твое имя" class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
+                <input type="email" id="reg-email" placeholder="Email" required class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
+                <input type="password" id="reg-password" data-placeholder="ph_pass" placeholder="Пароль (от 6 символов)" required class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
+                <button type="submit" class="eco-gradient text-white w-full py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:shadow-emerald-500/40 transition-all active:scale-95" data-key="btn_submit">Войти / Создать</button>
+            </form>
+        </div>
+    </div>
             <div id="user-profile" class="hidden space-y-8 py-4">
                 <div class="text-center space-y-2">
                     <p class="text-slate-400 font-bold text-xs uppercase tracking-widest" data-key="prof_bal">Твой баланс</p>
