@@ -93,6 +93,28 @@
 
         let currentUserId = null;
         const html5QrCode = new Html5Qrcode("reader");
+const qrConfig = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+// Универсальный запуск
+function startScanning() {
+    html5QrCode.start(
+        { facingMode: "environment" }, // Пробуем заднюю камеру
+        qrConfig,
+        onScanSuccess
+    ).catch(err => {
+        console.error("Задняя камера не найдена, пробую любую:", err);
+        // Если не вышло, пробуем просто любую доступную камеру
+        html5QrCode.start(
+            { facingMode: "user" }, 
+            qrConfig, 
+            onScanSuccess
+        ).catch(err2 => {
+            document.getElementById('status-msg').innerText = "Ошибка камеры: " + err2;
+        });
+    });
+}
+
+startScanning();
 
         // Функции для глобального доступа
         window.setAmount = (val) => {
