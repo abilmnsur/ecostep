@@ -8,49 +8,76 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #0f172a; }
-        #reader video { border-radius: 2.5rem; object-fit: cover; width: 100% !important; }
-        #reader { border: none !important; }
+        body { background-color: #0f172a; font-family: sans-serif; }
+        
+        /* ГЛАВНОЕ ИСПРАВЛЕНИЕ ТУТ */
+        /* Принудительно заставляем видео внутри библиотеки вписываться */
+        #reader video { 
+            width: 100% !important; 
+            height: 100% !important; 
+            object-fit: cover !important; 
+        }
+        #reader { border: none !important; width: 100% !important; height: 100% !important;}
+        
+        /* Дополнительная анимация для плавности */
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body class="text-white min-h-screen flex flex-col items-center p-4">
 
     <div class="w-full max-w-md bg-slate-800 p-8 rounded-[3rem] shadow-2xl mt-6 border border-slate-700">
-        <div class="flex items-center justify-between mb-6">
+        
+        <div class="flex items-center justify-between mb-8 px-2">
             <span class="font-black text-emerald-400 tracking-widest text-xs">ECOSTEP TERMINAL</span>
             <div id="status-dot" class="w-2 h-2 rounded-full bg-red-500"></div>
         </div>
         
-        <div class="relative overflow-hidden rounded-[2.5rem] bg-black mb-6 aspect-square border-2 border-slate-700">
-            <div id="reader"></div>
-            <div id="placeholder" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 z-10">
-                <button onclick="initCamera()" class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-2xl font-black shadow-lg transition-all active:scale-95">
-                    ОТКРЫТЬ КАМЕРУ
+        <div class="w-full aspect-square relative mb-8">
+            <div id="reader-wrapper" class="absolute inset-0 overflow-hidden rounded-[2.5rem] bg-black border-2 border-slate-700">
+                <div id="reader"></div>
+            </div>
+
+            <div id="placeholder" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 rounded-[2.5rem] z-20 border-2 border-slate-700">
+                <button onclick="initCamera()" class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-2xl font-black shadow-lg transition-all active:scale-95 text-sm uppercase tracking-wider">
+                    <i class="fas fa-camera mr-2"></i> Открыть камеру
                 </button>
-                <p id="error-log" class="text-[10px] mt-4 text-slate-500 px-4 text-center lowercase"></p>
+                <p id="error-log" class="text-[10px] mt-6 text-slate-600 px-6 text-center font-mono lowercase"></p>
             </div>
         </div>
 
-        <div id="user-info" class="hidden space-y-6 animate-in fade-in duration-500">
+        <div id="user-info" class="hidden space-y-8 fade-in">
             <div class="bg-slate-900/50 p-6 rounded-3xl border border-slate-700 text-center">
-                <p id="customer-name" class="text-xl font-black text-white">---</p>
-                <p class="text-emerald-400 font-bold"><span id="customer-balance">0</span> 🌿</p>
+                <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Клиент найден</p>
+                <p id="customer-name" class="text-2xl font-black text-white">---</p>
+                <div class="flex items-center justify-center gap-2 mt-2">
+                    <span class="text-3xl">🌿</span>
+                    <p class="text-3xl font-black text-emerald-400"><span id="customer-balance">0</span></p>
+                </div>
             </div>
             
-            <div class="relative">
-                <input type="number" id="spend-amount" value="0" class="w-full bg-transparent border-b-2 border-slate-600 text-center text-6xl font-black py-4 outline-none focus:border-blue-500 transition-all">
-            </div>
+            <div class="relative space-y-6">
+                <div class="relative">
+                    <input type="number" id="spend-amount" value="0" class="w-full bg-transparent border-b-2 border-slate-600 text-center text-7xl font-black py-4 outline-none focus:border-blue-500 transition-all appearance-none" onfocus="if(this.value=='0')this.value=''">
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-slate-600">🌿</span>
+                </div>
 
-            <div class="grid grid-cols-3 gap-2">
-                <button onclick="setAmount(50)" class="bg-slate-700 py-3 rounded-xl font-bold">50</button>
-                <button onclick="setAmount(100)" class="bg-slate-700 py-3 rounded-xl font-bold">100</button>
-                <button onclick="document.getElementById('spend-amount').value='0'" class="bg-slate-700 py-3 rounded-xl font-bold">C</button>
+                <div class="grid grid-cols-3 gap-3">
+                    <button onclick="setAmount(50)" class="bg-slate-700 hover:bg-slate-600 py-4 rounded-2xl font-bold active:scale-95 transition">50</button>
+                    <button onclick="setAmount(100)" class="bg-slate-700 hover:bg-slate-600 py-4 rounded-2xl font-bold active:scale-95 transition">100</button>
+                    <button onclick="document.getElementById('spend-amount').value='0'" class="bg-red-500/10 text-red-400 py-4 rounded-2xl font-bold active:scale-95 transition hover:bg-red-500/20">C</button>
+                </div>
             </div>
             
-            <button id="confirm-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] shadow-xl uppercase tracking-widest text-sm">
+            <button id="confirm-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-6 rounded-[2rem] shadow-xl shadow-blue-900/20 uppercase tracking-widest text-sm active:scale-95 transition-all">
                 Списать с баланса
             </button>
-            <button onclick="resetScanner()" class="w-full text-slate-500 font-bold py-2 text-xs uppercase">Отмена</button>
+            
+            <button onclick="resetScanner()" class="w-full text-slate-500 font-bold py-2 text-xs uppercase tracking-widest hover:text-white transition">Отмена / Сброс</button>
+        </div>
+        
+        <div id="terminal-status" class="text-center text-[10px] text-slate-600 font-bold uppercase tracking-widest mt-8">
+            Terminal v1.0 | Ready
         </div>
     </div>
 
@@ -58,14 +85,14 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ТВОИ ДАННЫЕ (УБЕДИСЬ, ЧТО ОНИ ВЕРНЫЕ)
+        // КОНФИГ ФАЙРБЕЙС (ВСТАВЬ СВОЙ!)
         const firebaseConfig = {
             apiKey: "ВСТАВЬ_API_KEY",
             authDomain: "ecostep-dfc99.firebaseapp.com",
             projectId: "ecostep-dfc99",
             storageBucket: "ecostep-dfc99.appspot.com",
             messagingSenderId: "ID",
-            appId: "ID"
+            appId: "APP_ID"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -76,8 +103,10 @@
 
         window.initCamera = async function() {
             const errorLog = document.getElementById('error-log');
+            const terminalStatus = document.getElementById('terminal-status');
+            terminalStatus.innerText = "Попытка запуска...";
+
             try {
-                // Если сканер уже был создан — очищаем его
                 if (html5QrCode) {
                     await html5QrCode.stop();
                     await html5QrCode.clear();
@@ -85,7 +114,12 @@
 
                 html5QrCode = new Html5Qrcode("reader");
                 
-                const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+                // Настройки: чуть меньше fps для стабильности на старых телефонах
+                const config = { 
+                    fps: 10, 
+                    qrbox: { width: 250, height: 250 },
+                    aspectRatio: 1.0 // Принудительно квадрат
+                };
                 
                 await html5QrCode.start(
                     { facingMode: "environment" }, 
@@ -95,45 +129,76 @@
 
                 document.getElementById('placeholder').style.display = 'none';
                 document.getElementById('status-dot').classList.replace('bg-red-500', 'bg-emerald-500');
+                terminalStatus.innerText = "Terminal Active";
+                if (navigator.vibrate) navigator.vibrate([50, 50]);
+
             } catch (err) {
-                errorLog.innerText = "Ошибка: " + err;
+                errorLog.innerText = "Критическая ошибка: " + err;
                 console.error(err);
-                // Если задняя камера не найдена, пробуем любую доступную
+                terminalStatus.innerText = "Camera Error";
+                // Попытка запустить хотя бы фронталку
                 html5QrCode.start({ facingMode: "user" }, { fps: 10, qrbox: 250 }, onScanSuccess);
             }
         };
 
         async function onScanSuccess(decodedText) {
-            if (currentUserId) return;
+            if (currentUserId) return; // Не сканируем если профиль уже открыт
             currentUserId = decodedText;
             
             try {
                 const userDoc = await getDoc(doc(db, "users", decodedText));
                 if (userDoc.exists()) {
                     const d = userDoc.data();
-                    document.getElementById('customer-name').innerText = d.firstName;
-                    document.getElementById('customer-balance').innerText = d.coins;
+                    document.getElementById('customer-name').innerText = d.firstName || "Ученик";
+                    document.getElementById('customer-balance').innerText = d.coins || 0;
+                    
+                    // Переключаем интерфейс
                     document.getElementById('user-info').classList.remove('hidden');
-                    if (navigator.vibrate) navigator.vibrate(100);
+                    document.getElementById('reader-wrapper').classList.add('opacity-30'); // Приглушаем камеру
+                    
+                    if (navigator.vibrate) navigator.vibrate(150);
+                } else {
+                    alert("Ошибка: QR-код верный, но пользователь не найден в базе!");
+                    resetScanner();
                 }
-            } catch (e) { alert("Ошибка Firestore"); }
+            } catch (e) { 
+                console.error(e);
+                alert("Ошибка сети при запросе данных пользователя."); 
+            }
         }
 
         window.setAmount = (v) => document.getElementById('spend-amount').value = v;
+
         window.resetScanner = () => {
             currentUserId = null;
             document.getElementById('user-info').classList.add('hidden');
+            document.getElementById('reader-wrapper').classList.remove('opacity-30');
             document.getElementById('spend-amount').value = "0";
         };
 
         document.getElementById('confirm-btn').onclick = async () => {
-            const amt = parseInt(document.getElementById('spend-amount').value);
+            const amtEl = document.getElementById('spend-amount');
+            const balanceEl = document.getElementById('customer-balance');
+            const amt = parseInt(amtEl.value);
+            const currentBalance = parseInt(balanceEl.innerText);
+
             if (amt <= 0 || !currentUserId) return;
+            if (amt > currentBalance) {
+                alert("Недостаточно 🌿 баланса у клиента!");
+                return;
+            }
+
             try {
-                await updateDoc(doc(db, "users", currentUserId), { coins: increment(-amt) });
-                alert("Списано успешно!");
+                await updateDoc(doc(db, "users", currentUserId), { 
+                    coins: increment(-amt) 
+                });
+                
+                alert(`🌿 Успешно списано ${amt} коинов!`);
                 resetScanner();
-            } catch (e) { alert("Ошибка списания!"); }
+            } catch (e) { 
+                console.error(e);
+                alert("Ошибка транзакции. Проверьте интернет-соединение."); 
+            }
         };
     </script>
 </body>
