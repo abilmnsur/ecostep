@@ -27,6 +27,7 @@
             <div class="hidden md:flex gap-8 font-bold text-sm uppercase tracking-widest text-slate-500">
                 <a href="#about" class="hover:text-emerald-500 transition" data-key="nav_about">О проекте</a>
                 <a href="#steps" class="hover:text-emerald-500 transition" data-key="nav_steps">Как это работает</a>
+                <a href="#events" class="hover:text-emerald-500 transition" data-key="nav_events">Мероприятия</a>
             </div>
             <div class="flex items-center gap-4">
                 <button onclick="toggleLang()" id="lang-btn" class="text-xs font-black border-2 border-slate-200 px-3 py-1 rounded-xl hover:bg-slate-100 transition">KZ</button>
@@ -40,7 +41,7 @@
     <section class="pt-32 pb-20 px-6">
         <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
             <div class="space-y-8">
-                <h1 class="text-6xl md:text-7xl font-black leading-[0.9] tracking-tight" id="hero-title">
+                <h1 class="text-6xl md:text-7xl font-black leading-[0.9] tracking-tight">
                     <span data-key="hero_1">Твои отходы —</span> <span class="text-emerald-500" data-key="hero_2">инвестиция</span>.
                 </h1>
                 <p class="text-xl text-slate-500 max-w-lg leading-relaxed" data-key="hero_desc">
@@ -95,20 +96,61 @@
         <div class="max-w-7xl mx-auto px-6">
             <h2 class="text-4xl font-black text-center mb-16" data-key="steps_title">Твой путь к успеху</h2>
             <div class="grid md:grid-cols-3 gap-16 relative">
-                <div class="space-y-4">
+                <div class="space-y-4 text-center">
                     <span class="text-emerald-500 font-black text-6xl opacity-30">01</span>
                     <h3 class="text-2xl font-bold" data-key="s1_t">Собери вторсырье</h3>
                     <p class="text-slate-400" data-key="s1_d">Пластиковые бутылки, макулатура или алюминиевые банки.</p>
                 </div>
-                <div class="space-y-4">
+                <div class="space-y-4 text-center">
                     <span class="text-emerald-500 font-black text-6xl opacity-30">02</span>
                     <h3 class="text-2xl font-bold" data-key="s2_t">Сканируй QR</h3>
                     <p class="text-slate-400" data-key="s2_d">Покажи свой код члену фракции экологии.</p>
                 </div>
-                <div class="space-y-4">
+                <div class="space-y-4 text-center">
                     <span class="text-emerald-500 font-black text-6xl opacity-30">03</span>
                     <h3 class="text-2xl font-bold" data-key="s3_t">Получи коины</h3>
                     <p class="text-slate-400" data-key="s3_d">Баланс обновится мгновенно. Трать их с удовольствием!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="events" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl font-black mb-12" data-key="nav_events">Мероприятия</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="group bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100 hover:border-emerald-500 transition-all duration-300">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-battery-full text-xl"></i>
+                        </div>
+                        <span class="text-slate-400 font-bold text-sm">14.05.26</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-key="ev1_t">Сбор батареек</h3>
+                    <p class="text-slate-500 text-sm mb-6" data-key="ev1_d">Сдавай старые батарейки! 1 шт = 5 EcoCoins. Спасем почву вместе.</p>
+                    <span class="inline-block bg-orange-100 text-orange-600 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest" data-key="ev_active">Активно</span>
+                </div>
+                <div class="group bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100 hover:border-emerald-500 transition-all duration-300">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-book text-xl"></i>
+                        </div>
+                        <span class="text-slate-400 font-bold text-sm">20.05.26</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-key="ev2_t">Макулатура</h3>
+                    <p class="text-slate-500 text-sm mb-6" data-key="ev2_d">Приноси старые газеты и тетради. 1 кг бумаги = 10 EcoCoins.</p>
+                    <span class="inline-block bg-slate-200 text-slate-500 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest" data-key="ev_soon">Скоро</span>
+                </div>
+                <div class="group bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100 hover:border-emerald-500 transition-all duration-300">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-broom text-xl"></i>
+                        </div>
+                        <span class="text-slate-400 font-bold text-sm">01.06.26</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-key="ev3_t">Эко-Субботник</h3>
+                    <p class="text-slate-500 text-sm mb-6" data-key="ev3_d">Приходи на уборку школьной территории. Участникам 50 EcoCoins.</p>
+                    <span class="inline-block bg-slate-200 text-slate-500 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest" data-key="ev_soon">Скоро</span>
                 </div>
             </div>
         </div>
@@ -119,33 +161,29 @@
             <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-900">
                 <i class="fas fa-times text-xl"></i>
             </button>
-
             <div id="register-form" class="space-y-6">
                 <div class="text-center">
                     <h2 class="text-3xl font-black tracking-tight" data-key="reg_title">Вход в систему</h2>
                     <p class="text-slate-500 text-sm mt-2" data-key="reg_desc">Введи данные, чтобы увидеть свой баланс</p>
                 </div>
                 <div class="space-y-4">
-                    <input type="text" id="user-name" data-placeholder="ph_name" placeholder="Твое имя" class="w-full p-5 bg-slate-100 rounded-3xl border-none focus:ring-2 focus:ring-emerald-500 outline-none font-bold">
-                    <input type="text" id="user-phone" data-placeholder="ph_phone" placeholder="Номер телефона" class="w-full p-5 bg-slate-100 rounded-3xl border-none focus:ring-2 focus:ring-emerald-500 outline-none font-bold">
+                    <input type="text" id="user-name" data-placeholder="ph_name" placeholder="Твое имя" class="w-full p-5 bg-slate-100 rounded-3xl border-none outline-none font-bold">
+                    <input type="text" id="user-phone" data-placeholder="ph_phone" placeholder="Номер телефона" class="w-full p-5 bg-slate-100 rounded-3xl border-none outline-none font-bold">
                     <button id="auth-btn" class="w-full bg-slate-900 text-white py-5 rounded-3xl font-black text-lg hover:bg-emerald-600 transition shadow-xl" data-key="reg_btn">
                         Войти / Создать
                     </button>
                 </div>
             </div>
-
             <div id="user-profile" class="hidden space-y-8 py-4">
                 <div class="text-center space-y-2">
                     <p class="text-slate-400 font-bold text-xs uppercase tracking-widest" data-key="prof_bal">Твой баланс</p>
                     <p class="text-6xl font-black text-emerald-500"><span id="display-coins">0</span> 🌿</p>
                     <p id="display-name" class="text-xl font-bold text-slate-800 pt-2"></p>
                 </div>
-                
                 <div class="bg-slate-50 p-6 rounded-[2.5rem] border-2 border-dashed border-slate-200">
                     <div id="qrcode" class="qr-container flex justify-center"></div>
                     <p class="text-center text-[10px] text-slate-400 mt-4 font-bold uppercase tracking-widest" data-key="prof_hint">Покажи этот код члену фракции экологии</p>
                 </div>
-
                 <button onclick="logout()" class="w-full text-slate-400 font-bold py-2 text-sm hover:text-red-500 transition" data-key="prof_logout">Выйти из аккаунта</button>
             </div>
         </div>
@@ -169,73 +207,70 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- ЛОГИКА ПЕРЕВОДА ---
         const translations = {
             ru: {
-                nav_about: "О проекте", nav_steps: "Как это работает", nav_cabinet: "Личный кабинет",
+                nav_about: "О проекте", nav_steps: "Как это работает", nav_events: "Мероприятия", nav_cabinet: "Личный кабинет",
                 hero_1: "Твои отходы —", hero_2: "инвестиция", hero_desc: "Первая школьная эко-платформа, где твои правильные привычки превращаются в цифровую валюту.",
                 btn_join: "Присоединиться", btn_more: "Узнать больше",
-                about_title: "Делаем мир чище вместе", about_desc: "EcoStep помогает школам организовать удобный сбор вторсырья, вовлекая учеников через геймификацию и систему поощрений.",
-                card1_t: "Экология", card1_d: "Снижаем экологический след школы и учим правильно сортировать мусор.",
-                card2_t: "Коины", card2_d: "За каждый сданный килограмм бумаги или пластика ты получаешь 🌿 EcoCoins.",
-                card3_t: "Призы", card3_d: "Трать накопленные коины на еду в столовой или дополнительные баллы.",
+                about_title: "Делаем мир чище вместе", about_desc: "EcoStep помогает школам организовать удобный сбор вторсырья.",
+                card1_t: "Экология", card1_d: "Снижаем экологический след школы.",
+                card2_t: "Коины", card2_d: "За каждый сданный кг получаешь 🌿 EcoCoins.",
+                card3_t: "Призы", card3_d: "Трать накопленные коины на еду в столовой.",
                 steps_title: "Твой путь к успеху",
-                s1_t: "Собери вторсырье", s1_d: "Пластиковые бутылки, макулатура или алюминиевые банки.",
+                s1_t: "Собери вторсырье", s1_d: "Пластиковые бутылки, макулатура или банки.",
                 s2_t: "Сканируй QR", s2_d: "Покажи свой код члену фракции экологии.",
-                s3_t: "Получи коины", s3_d: "Баланс обновится мгновенно. Трать их с удовольствием!",
+                s3_t: "Получи коины", s3_d: "Баланс обновится мгновенно.",
+                ev1_t: "Сбор батареек", ev1_d: "Сдавай старые батарейки! 1 шт = 5 EcoCoins. Спасем почву вместе.",
+                ev2_t: "Макулатура", ev2_d: "Приноси старые газеты и тетради. 1 кг бумаги = 10 EcoCoins.",
+                ev3_t: "Эко-Субботник", ev3_d: "Уборка территории. Участникам 50 EcoCoins.",
+                ev_active: "Активно", ev_soon: "Скоро",
                 reg_title: "Вход в систему", reg_desc: "Введи данные, чтобы увидеть свой баланс",
                 ph_name: "Твое имя", ph_phone: "Номер телефона", reg_btn: "Войти / Создать",
                 prof_bal: "Твой баланс", prof_hint: "Покажи этот код члену фракции экологии", prof_logout: "Выйти из аккаунта"
             },
             kk: {
-                nav_about: "Жоба туралы", nav_steps: "Жұмыс принципі", nav_cabinet: "Жеке кабинет",
+                nav_about: "Жоба туралы", nav_steps: "Жұмыс принципі", nav_events: "Іс-шаралар", nav_cabinet: "Жеке кабинет",
                 hero_1: "Сенің қалдықтарың —", hero_2: "инвестиция", hero_desc: "Сенің дұрыс әдеттерің цифрлық валютаға айналатын алғашқы мектептік эко-платформа.",
                 btn_join: "Қосылу", btn_more: "Толығырақ",
-                about_title: "Әлемді бірге тазартамыз", about_desc: "EcoStep мектептерге қайталама шикізатты жинауды ұйымдастыруға және оқушыларды ынталандыруға көмектеседі.",
-                card1_t: "Экология", card1_d: "Мектептің экологиялық ізін азайтып, қоқысты дұрыс сұрыптауды үйретеміз.",
-                card2_t: "Коиндар", card2_d: "Әрбір өткізілген келі қағаз немесе пластик үшін 🌿 EcoCoins аласың.",
-                card3_t: "Сыйлықтар", card3_d: "Жиналған коиндарды асханаға немесе қосымша баллдарға жұмса.",
+                about_title: "Әлемді бірге тазартамыз", about_desc: "EcoStep мектептерге қайталама шикізатты жинауды ұйымдастыруға көмектеседі.",
+                card1_t: "Экология", card1_d: "Мектептің экологиялық ізін азайтуды үйретеміз.",
+                card2_t: "Коиндар", card2_d: "Әрбір өткізілген келі үшін 🌿 EcoCoins аласың.",
+                card3_t: "Сыйлықтар", card3_d: "Жиналған коиндарды асханаға жұмсаңыз.",
                 steps_title: "Сенің табысқа жолың",
-                s1_t: "Шикізат жина", s1_d: "Пластик бөтелкелер, макулатура немесе алюминий банкалар.",
-                s2_t: "QR-кодты көрсет", s2_d: "Өз кодыңызды экология фракциясының мүшесіне көрсетіңіз.",
-                s3_t: "Коиндарды ал", s3_d: "Баланс бірден жаңартылады. Оларды рахаттана жұмса!",
+                s1_t: "Шикізат жина", s1_d: "Пластик бөтелкелер, макулатура немесе банкалар.",
+                s2_t: "QR-кодты көрсет", s2_d: "Кодыңызды экология фракциясының мүшесіне көрсетіңіз.",
+                s3_t: "Коиндарды ал", s3_d: "Баланс бірден жаңартылады. Оларды жұмса!",
+                ev1_t: "Батарея жинау", ev1_d: "Ескі батареяларды өткіз! 1 дана = 5 EcoCoins. Топырақты бірге сақтайық.",
+                ev2_t: "Макулатура", ev2_d: "Қағаз әкеліңіз. 1 кг = 10 EcoCoins.",
+                ev3_t: "Эко-Сенбілік", ev3_d: "Аумақты тазалау. Қатысушыларға 50 EcoCoins.",
+                ev_active: "Белсенді", ev_soon: "Жақында",
                 reg_title: "Жүйеге кіру", reg_desc: "Балансты көру үшін деректерді енгізіңіз",
                 ph_name: "Есіміңіз", ph_phone: "Телефон нөмірі", reg_btn: "Кіру / Тіркелу",
-                prof_bal: "Сенің балансың", prof_hint: "Бұл кодты экология фракциясының мүшесіне көрсетіңіз", prof_logout: "Аккаунттан шығу"
+                prof_bal: "Сенің балансың", prof_hint: "Кодты экология фракциясының мүшесіне көрсетіңіз", prof_logout: "Шығу"
             }
         };
 
         let currentLang = localStorage.getItem('ecoLang') || 'ru';
-
         window.toggleLang = () => {
             currentLang = currentLang === 'ru' ? 'kk' : 'ru';
             localStorage.setItem('ecoLang', currentLang);
             updateLanguage();
         };
-
         function updateLanguage() {
             const langBtn = document.getElementById('lang-btn');
             langBtn.innerText = currentLang === 'ru' ? 'KZ' : 'RU';
-            
             document.querySelectorAll('[data-key]').forEach(el => {
                 const key = el.getAttribute('data-key');
-                if (translations[currentLang][key]) {
-                    el.innerText = translations[currentLang][key];
-                }
+                if (translations[currentLang][key]) el.innerText = translations[currentLang][key];
             });
-
             document.querySelectorAll('[data-placeholder]').forEach(el => {
                 const key = el.getAttribute('data-placeholder');
-                if (translations[currentLang][key]) {
-                    el.placeholder = translations[currentLang][key];
-                }
+                if (translations[currentLang][key]) el.placeholder = translations[currentLang][key];
             });
         }
         updateLanguage();
 
-        // --- ЛОГИКА FIREBASE ---
         let currentUser = localStorage.getItem('ecoUserId');
-
         window.openModal = () => {
             document.getElementById('auth-modal').classList.remove('hidden');
             if (currentUser) loadProfile(currentUser);
@@ -246,15 +281,10 @@
             const name = document.getElementById('user-name').value;
             const phone = document.getElementById('user-phone').value;
             if (!name || !phone) return alert(currentLang === 'ru' ? "Заполни все поля" : "Барлық өрістерді толтырыңыз");
-
             const userId = phone.replace(/\D/g, '');
             const userRef = doc(db, "users", userId);
             const userSnap = await getDoc(userRef);
-
-            if (!userSnap.exists()) {
-                await setDoc(userRef, { firstName: name, phone: phone, coins: 0 });
-            }
-            
+            if (!userSnap.exists()) await setDoc(userRef, { firstName: name, phone: phone, coins: 0 });
             localStorage.setItem('ecoUserId', userId);
             currentUser = userId;
             loadProfile(userId);
@@ -263,16 +293,10 @@
         function loadProfile(userId) {
             document.getElementById('register-form').classList.add('hidden');
             document.getElementById('user-profile').classList.remove('hidden');
-            
             document.getElementById('qrcode').innerHTML = "";
             new QRCode(document.getElementById("qrcode"), {
-                text: userId,
-                width: 200,
-                height: 200,
-                colorDark : "#0f172a",
-                colorLight : "#f8fafc"
+                text: userId, width: 200, height: 200, colorDark : "#0f172a", colorLight : "#f8fafc"
             });
-
             onSnapshot(doc(db, "users", userId), (doc) => {
                 const data = doc.data();
                 if (data) {
@@ -281,12 +305,10 @@
                 }
             });
         }
-
         window.logout = () => {
             localStorage.removeItem('ecoUserId');
             location.reload();
         };
     </script>
-
 </body>
 </html>
