@@ -170,9 +170,12 @@
                     <input type="text" id="user-name" placeholder="Твое имя" class="w-full p-5 bg-slate-100 rounded-3xl border-none outline-none font-bold focus:ring-2 ring-emerald-500">
                     <input type="email" id="user-email" placeholder="Email" class="w-full p-5 bg-slate-100 rounded-3xl border-none outline-none font-bold focus:ring-2 ring-emerald-500">
                     <input type="password" id="user-pass" placeholder="Пароль" class="w-full p-5 bg-slate-100 rounded-3xl border-none outline-none font-bold focus:ring-2 ring-emerald-500">
-                    <button id="auth-submit-btn" class="eco-gradient w-full text-white py-5 rounded-3xl font-black text-lg shadow-xl hover:scale-[1.02] transition active:scale-95" data-key="reg_btn">
-                        Войти / Создать
-                    </button>
+<button id="auth-submit-btn" class="eco-gradient w-full text-white py-5 rounded-3xl font-black text-lg shadow-xl hover:scale-[1.02] transition active:scale-95 flex items-center justify-center gap-3" data-key="reg_btn">
+    <span class="bg-white w-8 h-8 rounded-full flex items-center justify-center">
+        <i class="fas fa-leaf text-emerald-600 text-sm"></i>
+    </span>
+    Войти / Создать
+</button>
                 </div>
             </div>
 
@@ -254,12 +257,13 @@
             }
         };
 
-        let currentLang = localStorage.getItem('ecoLang') || 'ru';
+       let currentLang = localStorage.getItem('ecoLang') || 'ru';
         window.toggleLang = () => {
             currentLang = currentLang === 'ru' ? 'kk' : 'ru';
             localStorage.setItem('ecoLang', currentLang);
             updateLanguage();
         };
+
         function updateLanguage() {
             const langBtn = document.getElementById('lang-btn');
             langBtn.innerText = currentLang === 'ru' ? 'KZ' : 'RU';
@@ -267,52 +271,80 @@
                 const key = el.getAttribute('data-key');
                 if (translations[currentLang][key]) el.innerText = translations[currentLang][key];
             });
-            document.querySelectorAll('[data-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-placeholder');
-                if (translations[currentLang][key]) el.placeholder = translations[currentLang][key];
-            });
         }
         updateLanguage();
 
-        let currentUser = localStorage.getItem('ecoUserId');
         window.openModal = () => {
+            const userId = localStorage.getItem('ecoUserId');
             document.getElementById('auth-modal').classList.remove('hidden');
-            if (currentUser) loadProfile(currentUser);
+            if (userId) {
+                loadProfile(userId);
+            }
         };
+
         window.closeModal = () => document.getElementById('auth-modal').classList.add('hidden');
 
-        document.getElementById('auth-btn').onclick = async () => {
+        document.getElementById('auth-submit-btn').onclick = async () => {
             const name = document.getElementById('user-name').value;
-            const phone = document.getElementById('user-phone').value;
-            if (!name || !phone) return alert(currentLang === 'ru' ? "Заполни все поля" : "Барлық өрістерді толтырыңыз");
-            const userId = phone.replace(/\D/g, '');
+            const email = document.getElementById('user-email').value;
+            const pass = document.getElementById('user-pass').value;
+
+            if (!email || !pass) return alert("Заполни email и пароль!");
+
+            const userId = email.replace(/[.@]/g, '_');
             const userRef = doc(db, "users", userId);
             const userSnap = await getDoc(userRef);
-            if (!userSnap.exists()) await setDoc(userRef, { firstName: name, phone: phone, coins: 0 });
+
+            if (userSnap.exists()) {
+                if (userSnap.data().password !== pass) return alert("Неверный пароль!");
+            } else {
+                if (!name) return alert("Введите имя для регистрации!");
+                await setDoc(userRef, { firstName: name, email, password: pass, coins: 0 });
+            }
+
             localStorage.setItem('ecoUserId', userId);
-            currentUser = userId;
             loadProfile(userId);
         };
 
         function loadProfile(userId) {
             document.getElementById('register-form').classList.add('hidden');
             document.getElementById('user-profile').classList.remove('hidden');
-            document.getElementById('qrcode').innerHTML = "";
-            new QRCode(document.getElementById("qrcode"), {
-                text: userId, width: 200, height: 200, colorDark : "#0f172a", colorLight : "#f8fafc"
+            
+            // Генерируем QR
+            const qrBox = document.getElementById('qrcode');
+            qrBox.innerHTML = "";
+            new QRCode(qrBox, {
+                text: userId,
+                width: 200,
+                height: 200,
+                colorDark : "#059669",
+                colorLight : "#ffffff"
             });
-            onSnapshot(doc(db, "users", userId), (doc) => {
-                const data = doc.data();
+
+            // Слушаем обновления баланса в реальном времени
+            onSnapshot(doc(db, "users", userId), (docSnap) => {
+                const data = docSnap.data();
                 if (data) {
                     document.getElementById('display-name').innerText = data.firstName;
                     document.getElementById('display-coins').innerText = data.coins;
                 }
             });
         }
+
         window.logout = () => {
             localStorage.removeItem('ecoUserId');
             location.reload();
         };
+
+        // Если пользователь уже вошел, подгружаем данные (для кнопки в навигаторе)
+        const savedId = localStorage.getItem('ecoUserId');
+        if (savedId) {
+             onSnapshot(doc(db, "users", savedId), (docSnap) => {
+                if (docSnap.exists()) {
+                    document.getElementById('auth-btn-text')?.innerText || (document.querySelector('[data-key="nav_cabinet"]').innerText = docSnap.data().firstName);
+                }
+            });
+        }
     </script>
 </body>
 </html>
