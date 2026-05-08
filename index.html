@@ -76,8 +76,8 @@
     </header>
 
     <section id="events-section" class="py-24 bg-slate-50 border-y border-slate-200">
-        <div class="max-w-7xl mx-auto px-6">
-            <h2 class="text-4xl font-black mb-12 text-center lg:text-left" data-key="events_title">Актуальные сборы</h2>
+        <div class="max-w-7xl mx-auto px-6 text-center lg:text-left">
+            <h2 class="text-4xl font-black mb-12" data-key="events_title">Актуальные сборы</h2>
             <div id="events-list" class="grid md:grid-cols-3 gap-8">
                 </div>
         </div>
@@ -88,10 +88,10 @@
             <button onclick="toggleModal(false)" class="absolute top-8 right-8 text-slate-300 hover:text-black transition"><i class="fas fa-times text-2xl"></i></button>
             <h3 class="text-3xl font-black mb-8" data-key="modal_head">Регистрация</h3>
             <form id="auth-form" class="space-y-4">
-                <input type="text" id="reg-name" data-placeholder="ph_name" placeholder="Твое имя" class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
+                <input type="text" id="reg-name" placeholder="Твое имя" class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
                 <input type="email" id="reg-email" placeholder="Email" required class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
-                <input type="password" id="reg-password" data-placeholder="ph_pass" placeholder="Пароль (от 6 символов)" required class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
-                <button type="submit" class="eco-gradient text-white w-full py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:shadow-emerald-500/40 transition-all active:scale-95" data-key="btn_submit">Войти / Создать</button>
+                <input type="password" id="reg-password" placeholder="Пароль (от 6 символов)" required class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
+                <button type="submit" class="eco-gradient text-white w-full py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:shadow-emerald-500/40 transition-all active:scale-95" data-key="btn_submit">Создать аккаунт</button>
             </form>
         </div>
     </div>
@@ -109,19 +109,20 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // КОНФИГ: СЮДА ВСТАВЬ СВОИ ДАННЫЕ
         const firebaseConfig = {
-            apiKey: "AIzaSyBGBtCmbJ_c54hsomEEFT5UlIC-ax3K7mI",
-            authDomain: "ecostep-dfc99.firebaseapp.com",
-            databaseURL: "https://ecostep-dfc99-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "ecostep-dfc99",
-            storageBucket: "ecostep-dfc99.firebasestorage.app",
-            messagingSenderId: "702037270996",
-            appId: "1:702037270996:web:3fb011189b82f76f4fb641",
-            measurementId: "G-6EBV1M5ECZ"
-        };
+  apiKey: "AIzaSyBGBtCmbJ_c54hsomEEFT5UlIC-ax3K7mI",
+  authDomain: "ecostep-dfc99.firebaseapp.com",
+  databaseURL: "https://ecostep-dfc99-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "ecostep-dfc99",
+  storageBucket: "ecostep-dfc99.firebasestorage.app",
+  messagingSenderId: "702037270996",
+  appId: "1:702037270996:web:3fb011189b82f76f4fb641",
+  measurementId: "G-6EBV1M5ECZ"
+};
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -133,135 +134,84 @@
                 btn_auth: "Войти", hero_title: 'Твои отходы — <br><span class="text-emerald-500 uppercase">инвестиция.</span>',
                 hero_desc: "EcoStep — сдавай вторсырье в школе и получай коины на реальные покупки.",
                 btn_start: "Участвовать", balance_label: "Баланс коинов", events_title: "Актуальные сборы",
-                modal_head: "Вход / Регистрация", btn_submit: "Войти / Создать", success_title: "Готово!",
-                success_text: "Твой профиль создан. Теперь ты можешь копить баллы.",
-                ph_name: "Твое имя", ph_pass: "Пароль (от 6 символов)"
+                modal_head: "Регистрация", btn_submit: "Создать аккаунт", success_title: "Готово!",
+                success_text: "Твой профиль создан. Теперь ты можешь копить баллы."
             },
             kz: {
                 nav_about: "Жоба туралы", nav_steps: "Бұл қалай жұмыс істейді", nav_events: "Шаралар",
                 btn_auth: "Кіру", hero_title: 'Сенің қалдықтарың — <br><span class="text-emerald-500 uppercase">инвестиция.</span>',
                 hero_desc: "EcoStep — мектепте қайталама шикізат тапсырып, нақты заттарға коиндар ал.",
                 btn_start: "Қатысу", balance_label: "Коиндар балансы", events_title: "Белсенді жиындар",
-                modal_head: "Кіру / Тіркелу", btn_submit: "Кіру / Тіркелу", success_title: "Дайын!",
-                success_text: "Профиліңіз жасалды. Енді ұпай жинай аласыз.",
-                ph_name: "Есіміңіз", ph_pass: "Құпия сөз (6 таңбадан кем емес)"
+                modal_head: "Тіркелу", btn_submit: "Тіркелу", success_title: "Дайын!",
+                success_text: "Профиліңіз жасалды. Енді ұпай жинай аласыз."
             }
         };
 
         let currentLang = 'ru';
 
         window.toggleModal = (show) => document.getElementById('regModal').classList.toggle('active', show);
-        
         window.changeLang = (lang) => {
             currentLang = lang;
-            document.querySelectorAll('[data-key]').forEach(el => {
-                const key = el.getAttribute('data-key');
-                el.innerHTML = translations[lang][key] || el.innerHTML;
-            });
-            document.querySelectorAll('[data-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-placeholder');
-                el.placeholder = translations[lang][key] || el.placeholder;
-            });
+            document.querySelectorAll('[data-key]').forEach(el => el.innerHTML = translations[lang][el.getAttribute('data-key')] || el.innerHTML);
             document.getElementById('btn-ru').className = lang === 'ru' ? "px-3 py-1 rounded-lg text-xs font-bold bg-white shadow-sm" : "px-3 py-1 rounded-lg text-xs font-bold text-slate-400";
             document.getElementById('btn-kz').className = lang === 'kz' ? "px-3 py-1 rounded-lg text-xs font-bold bg-white shadow-sm" : "px-3 py-1 rounded-lg text-xs font-bold text-slate-400";
             loadEvents();
         };
 
-        // ЗАГРУЗКА МЕРОПРИЯТИЙ (ВКЛЮЧАЯ БАТАРЕЙКИ)
         async function loadEvents() {
             const list = document.getElementById('events-list');
-            list.innerHTML = '';
-            
-            // Сначала попробуем загрузить из Firebase, если пусто - покажем дефолт (батарейки)
             try {
                 const q = query(collection(db, "events"), where("status", "==", "active"));
                 const snap = await getDocs(q);
-                
-                if (snap.empty) {
-                    // Тот самый сбор батареек, если в базе пусто
-                    const defaultEvent = {
-                        date: "14.05.26",
-                        title: currentLang === 'ru' ? "Сбор батареек" : "Батарея жинау",
-                        reward: "1 шт = 5 EcoCoins"
-                    };
-                    renderEventCard(defaultEvent);
-                } else {
-                    snap.forEach(docSnap => {
-                        const d = docSnap.data();
-                        renderEventCard({
-                            date: d.date || "Скоро",
-                            title: currentLang === 'ru' ? (d.title_ru || d['title.ru']) : (d.title_kz || d['title.kz']),
-                            reward: currentLang === 'ru' ? (d.reward_ru || d['reward.ru']) : (d.reward_kz || d['reward.kz'])
-                        });
-                    });
-                }
+                list.innerHTML = '';
+                if (snap.empty) { list.innerHTML = `<p class="col-span-3 text-center text-slate-400 italic">Сборов пока нет</p>`; return; }
+                snap.forEach(docSnap => {
+                    const d = docSnap.data();
+                    const title = currentLang === 'ru' ? (d['title.ru'] || d.title_ru) : (d['title.kz'] || d.title_kz);
+                    const reward = currentLang === 'ru' ? (d['reward_info.ru'] || d.reward_info_ru) : (d['reward_info.kz'] || d.reward_info_kz);
+                    list.innerHTML += `
+                        <div class="bg-white p-8 rounded-[2.5rem] border border-emerald-100 shadow-sm hover:shadow-md transition">
+                            <div class="text-emerald-500 font-bold text-xs mb-3 uppercase tracking-widest">${d.date || '14.05'}</div>
+                            <h4 class="font-black text-xl mb-4">${title || 'Сбор'}</h4>
+                            <div class="bg-emerald-50 p-4 rounded-2xl flex justify-between items-center italic">
+                                <span class="text-xs font-bold text-emerald-800 uppercase">COINS</span>
+                                <span class="font-black text-emerald-600">${reward || '0'}</span>
+                            </div>
+                        </div>`;
+                });
             } catch (e) { console.error(e); }
         }
 
-        function renderEventCard(ev) {
-            document.getElementById('events-list').innerHTML += `
-                <div class="bg-white p-8 rounded-[2.5rem] border border-emerald-100 shadow-sm hover:shadow-md transition">
-                    <div class="text-emerald-500 font-bold text-xs mb-3 uppercase tracking-widest">${ev.date}</div>
-                    <h4 class="font-black text-xl mb-4">${ev.title}</h4>
-                    <div class="bg-emerald-50 p-4 rounded-2xl flex justify-between items-center italic">
-                        <span class="text-xs font-bold text-emerald-800 uppercase">COINS</span>
-                        <span class="font-black text-emerald-600">${ev.reward}</span>
-                    </div>
-                </div>`;
-        }
-
-        // ЛОГИКА ВХОДА И РЕГИСТРАЦИИ (Firebase Auth)
+        // РЕГИСТРАЦИЯ
         document.getElementById('auth-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('reg-email').value;
             const pass = document.getElementById('reg-password').value;
             const name = document.getElementById('reg-name').value;
-
             try {
-                // Пытаемся войти
-                await signInWithEmailAndPassword(auth, email, pass);
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                await setDoc(doc(db, "users", res.user.uid), { firstName: name || "Ученик", coins: 0, rating: 0 });
                 toggleModal(false);
-            } catch (err) {
-                // Если пользователя нет — регистрируем
-                if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-                    try {
-                        const res = await createUserWithEmailAndPassword(auth, email, pass);
-                        await setDoc(doc(db, "users", res.user.uid), { 
-                            firstName: name || "Ученик", 
-                            email: email,
-                            coins: 0, 
-                            rating: 0 
-                        });
-                        toggleModal(false);
-                        document.getElementById('successModal').classList.add('active');
-                    } catch (regErr) {
-                        alert("Ошибка регистрации: " + regErr.message);
-                    }
-                } else {
-                    alert("Ошибка входа: " + err.message);
-                }
-            }
+                document.getElementById('successModal').classList.add('active');
+            } catch (err) { alert("Ошибка Firebase: " + err.message); }
         });
 
-        // СЛУШАТЕЛЬ ПРОФИЛЯ (Real-time через onSnapshot)
-        onAuthStateChanged(auth, (user) => {
+        // СЛУШАТЕЛЬ СОСТОЯНИЯ (ПРОФИЛЬ)
+        onAuthStateChanged(auth, async (user) => {
             const authBtn = document.getElementById('auth-btn');
             const qrContainer = document.getElementById('qrcode');
-            
             if (user) {
-                onSnapshot(doc(db, "users", user.uid), (docSnap) => {
-                    if (docSnap.exists()) {
-                        const d = docSnap.data();
-                        document.getElementById('user-balance').innerText = d.coins || 0;
-                        document.getElementById('user-rating').innerText = d.rating || "---";
-                        document.getElementById('rating-block').classList.remove('hidden');
-                        authBtn.innerHTML = `<i class="fas fa-circle-user mr-2 text-emerald-500"></i> ${d.firstName}`;
-                        authBtn.onclick = null;
-                        
-                        qrContainer.innerHTML = "";
-                        new QRCode(qrContainer, { text: user.uid, width: 180, height: 180, colorDark : "#065f46" });
-                    }
-                });
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists()) {
+                    const d = userDoc.data();
+                    document.getElementById('user-balance').innerText = d.coins || 0;
+                    document.getElementById('user-rating').innerText = d.rating || "---";
+                    document.getElementById('rating-block').classList.remove('hidden');
+                    authBtn.innerHTML = `<i class="fas fa-circle-user mr-2 text-emerald-500"></i> ${d.firstName}`;
+                    authBtn.onclick = null;
+                    qrContainer.innerHTML = "";
+                    new QRCode(qrContainer, { text: user.uid, width: 180, height: 180, colorDark : "#065f46" });
+                }
             }
         });
 
