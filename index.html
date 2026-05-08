@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoStep — Начни менять мир</title>
+    <title>EcoStep — Твой вклад в экологию</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -14,6 +14,8 @@
         .eco-gradient { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
         .modal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
         .modal.active { display: flex; align-items: center; justify-content: center; }
+        .scale-in { animation: scaleIn 0.3s ease-out; }
+        @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
@@ -22,7 +24,7 @@
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
             <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
                 <i class="fas fa-leaf text-emerald-500 text-2xl"></i>
-                <span class="text-2xl font-extrabold text-emerald-600 italic">EcoStep</span>
+                <span class="text-2xl font-extrabold text-emerald-600 italic tracking-tighter">EcoStep</span>
             </div>
             
             <div class="hidden md:flex gap-8 font-semibold text-slate-600">
@@ -33,10 +35,12 @@
 
             <div class="flex items-center gap-4">
                 <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
-                    <button id="btn-ru" onclick="changeLang('ru')" class="px-3 py-1 rounded-lg text-xs font-bold bg-white shadow-sm transition-all">RU</button>
-                    <button id="btn-kz" onclick="changeLang('kz')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-400 transition-all">KZ</button>
+                    <button id="btn-ru" onclick="changeLang('ru')" class="px-3 py-1 rounded-lg text-xs font-bold bg-white shadow-sm">RU</button>
+                    <button id="btn-kz" onclick="changeLang('kz')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-400">KZ</button>
                 </div>
-                <button id="auth-btn" onclick="toggleModal(true)" data-key="btn_auth" class="eco-gradient text-white px-5 py-2 rounded-xl font-bold shadow-lg">Войти</button>
+                <button id="auth-btn" onclick="toggleModal(true)" data-key="btn_auth" class="eco-gradient text-white px-5 py-2 rounded-xl font-bold shadow-lg flex items-center gap-2">
+                    <span>Войти</span>
+                </button>
             </div>
         </div>
     </nav>
@@ -54,63 +58,52 @@
                 </div>
             </div>
 
-            <div class="relative hidden lg:block">
-                <div class="relative glass border-2 border-white p-10 rounded-[3rem] shadow-2xl text-center">
-                    <div id="qrcode" class="flex justify-center mb-6 p-4 bg-white rounded-2xl mx-auto w-44 h-44 items-center border shadow-inner text-slate-300 text-sm italic">
-                        Войдите, чтобы <br> получить QR
+            <div class="relative flex justify-center lg:justify-end">
+                <div class="relative glass border-2 border-white p-10 rounded-[3rem] shadow-2xl text-center w-full max-w-sm">
+                    <div id="qrcode" class="flex justify-center mb-6 p-4 bg-white rounded-3xl mx-auto w-48 h-48 items-center border shadow-inner transition-all duration-700 overflow-hidden">
+                        <i class="fas fa-qrcode text-slate-100 text-7xl"></i>
                     </div>
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-widest" data-key="balance_label">Баланс коинов</p>
                     <div class="text-5xl font-black text-slate-800 mt-2"><span id="user-balance">0</span> <span class="text-emerald-500 text-3xl">🌿</span></div>
+                    
+                    <div id="rating-block" class="hidden border-t border-slate-100 mt-6 pt-4">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Твой рейтинг</p>
+                        <p class="font-black text-slate-700 mt-1"><i class="fas fa-trophy text-amber-400 mr-1"></i> <span id="user-rating">---</span> место</p>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <section id="about" class="py-24 bg-white border-y border-slate-50">
-        <div class="max-w-7xl mx-auto px-6">
-            <h2 class="text-4xl font-black mb-8" data-key="about_title">О проекте</h2>
-            <p class="text-slate-600 text-lg max-w-3xl leading-relaxed" data-key="about_text">Мы создаем культуру переработки в школах Казахстана. Каждый сданный предмет — это вклад в экологию и твой личный счет, который можно потратить в школьной столовой.</p>
-        </div>
-    </section>
-
-    <section id="events-section" class="py-24 bg-slate-50">
-        <div class="max-w-7xl mx-auto px-6">
+    <section id="events-section" class="py-24 bg-slate-50 border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 text-center lg:text-left">
             <h2 class="text-4xl font-black mb-12" data-key="events_title">Актуальные сборы</h2>
             <div id="events-list" class="grid md:grid-cols-3 gap-8">
                 </div>
         </div>
     </section>
 
-    <section id="steps" class="py-24 bg-slate-900 text-white text-center">
-        <div class="max-w-7xl mx-auto px-6">
-            <h2 class="text-4xl font-black mb-16" data-key="steps_title">Как это работает?</h2>
-            <div class="grid md:grid-cols-3 gap-10">
-                <div class="p-10 bg-white/5 rounded-[2.5rem] border border-white/10 hover:border-emerald-500/50 transition">
-                    <i class="fas fa-box-open text-emerald-400 text-3xl mb-6"></i>
-                    <p class="font-bold italic" data-key="step1">Принеси сырье волонтеру</p>
-                </div>
-                <div class="p-10 bg-white/5 rounded-[2.5rem] border border-white/10 hover:border-emerald-500/50 transition">
-                    <i class="fas fa-mobile-alt text-emerald-400 text-3xl mb-6"></i>
-                    <p class="font-bold italic" data-key="step2">Сканируй свой QR-код</p>
-                </div>
-                <div class="p-10 bg-white/5 rounded-[2.5rem] border border-white/10 hover:border-emerald-500/50 transition">
-                    <i class="fas fa-coins text-emerald-400 text-3xl mb-6"></i>
-                    <p class="font-bold italic" data-key="step3">Получай баллы на счет</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <div id="regModal" class="modal px-6">
-        <div class="bg-white w-full max-w-md rounded-[3rem] p-10 relative shadow-2xl">
-            <button onclick="toggleModal(false)" class="absolute top-8 right-8 text-slate-300 hover:text-slate-900 transition"><i class="fas fa-times text-2xl"></i></button>
+        <div class="bg-white w-full max-w-md rounded-[3rem] p-10 relative shadow-2xl scale-in">
+            <button onclick="toggleModal(false)" class="absolute top-8 right-8 text-slate-300 hover:text-black transition"><i class="fas fa-times text-2xl"></i></button>
             <h3 class="text-3xl font-black mb-8" data-key="modal_head">Регистрация</h3>
             <form id="auth-form" class="space-y-4">
-                <input type="text" id="reg-name" placeholder="Имя" class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500">
-                <input type="email" id="reg-email" placeholder="E-mail" required class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500">
-                <input type="password" id="reg-password" placeholder="Пароль" required class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500">
-                <button type="submit" class="eco-gradient text-white w-full py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:opacity-90 transition" data-key="btn_submit">Создать аккаунт</button>
+                <input type="text" id="reg-name" placeholder="Твое имя" class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
+                <input type="email" id="reg-email" placeholder="Email" required class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
+                <input type="password" id="reg-password" placeholder="Пароль (от 6 символов)" required class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
+                <button type="submit" class="eco-gradient text-white w-full py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:shadow-emerald-500/40 transition-all active:scale-95" data-key="btn_submit">Создать аккаунт</button>
             </form>
+        </div>
+    </div>
+
+    <div id="successModal" class="modal px-6">
+        <div class="bg-white w-full max-w-sm rounded-[3rem] p-10 text-center shadow-2xl scale-in border-4 border-emerald-50">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-black mb-2" data-key="success_title">Готово!</h3>
+            <p class="text-slate-500 mb-8" data-key="success_text">Твой профиль EcoStep создан. Теперь ты можешь копить баллы.</p>
+            <button onclick="document.getElementById('successModal').classList.remove('active')" class="eco-gradient text-white w-full py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg">Отлично</button>
         </div>
     </div>
 
@@ -119,8 +112,8 @@
         import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ТВОИ КЛЮЧИ ТУТ
-      const firebaseConfig = {
+        // КОНФИГ: СЮДА ВСТАВЬ СВОИ ДАННЫЕ
+        const firebaseConfig = {
   apiKey: "AIzaSyBGBtCmbJ_c54hsomEEFT5UlIC-ax3K7mI",
   authDomain: "ecostep-dfc99.firebaseapp.com",
   databaseURL: "https://ecostep-dfc99-default-rtdb.europe-west1.firebasedatabase.app",
@@ -140,35 +133,26 @@
                 nav_about: "О проекте", nav_steps: "Как это работает", nav_events: "Мероприятия",
                 btn_auth: "Войти", hero_title: 'Твои отходы — <br><span class="text-emerald-500 uppercase">инвестиция.</span>',
                 hero_desc: "EcoStep — сдавай вторсырье в школе и получай коины на реальные покупки.",
-                btn_start: "Участвовать", balance_label: "Баланс коинов", about_title: "О проекте",
-                about_text: "Мы создаем культуру переработки в школах Казахстана. Каждый сданный предмет — это вклад в экологию.",
-                events_title: "Актуальные сборы", steps_title: "Как это работает?", 
-                step1: "Принеси сырье волонтеру", step2: "Сканируй свой QR-код", step3: "Получай баллы на счет",
-                modal_head: "Регистрация", btn_submit: "Создать аккаунт"
+                btn_start: "Участвовать", balance_label: "Баланс коинов", events_title: "Актуальные сборы",
+                modal_head: "Регистрация", btn_submit: "Создать аккаунт", success_title: "Готово!",
+                success_text: "Твой профиль создан. Теперь ты можешь копить баллы."
             },
             kz: {
                 nav_about: "Жоба туралы", nav_steps: "Бұл қалай жұмыс істейді", nav_events: "Шаралар",
                 btn_auth: "Кіру", hero_title: 'Сенің қалдықтарың — <br><span class="text-emerald-500 uppercase">инвестиция.</span>',
                 hero_desc: "EcoStep — мектепте қайталама шикізат тапсырып, нақты заттарға коиндар ал.",
-                btn_start: "Қатысу", balance_label: "Коиндар балансы", about_title: "Жоба туралы",
-                about_text: "Біз Қазақстан мектептерінде қайта өңдеу мәдениетін қалыптастырамыз. Әрбір тапсырылған зат — экологияға үлес.",
-                events_title: "Белсенді жиындар", steps_title: "Бұл қалай жұмыс істейді?", 
-                step1: "Шикізатты еріктіге әкел", step2: "Өзіңнің QR-кодыңды сканерле", step3: "Шотқа ұпайларды ал",
-                modal_head: "Тіркелу", btn_submit: "Тіркелу"
+                btn_start: "Қатысу", balance_label: "Коиндар балансы", events_title: "Белсенді жиындар",
+                modal_head: "Тіркелу", btn_submit: "Тіркелу", success_title: "Дайын!",
+                success_text: "Профиліңіз жасалды. Енді ұпай жинай аласыз."
             }
         };
 
         let currentLang = 'ru';
 
-        window.toggleModal = (show) => { document.getElementById('regModal').classList.toggle('active', show); };
-
+        window.toggleModal = (show) => document.getElementById('regModal').classList.toggle('active', show);
         window.changeLang = (lang) => {
             currentLang = lang;
-            const dict = translations[lang];
-            document.querySelectorAll('[data-key]').forEach(el => {
-                const key = el.getAttribute('data-key');
-                if(dict[key]) el.innerHTML = dict[key];
-            });
+            document.querySelectorAll('[data-key]').forEach(el => el.innerHTML = translations[lang][el.getAttribute('data-key')] || el.innerHTML);
             document.getElementById('btn-ru').className = lang === 'ru' ? "px-3 py-1 rounded-lg text-xs font-bold bg-white shadow-sm" : "px-3 py-1 rounded-lg text-xs font-bold text-slate-400";
             document.getElementById('btn-kz').className = lang === 'kz' ? "px-3 py-1 rounded-lg text-xs font-bold bg-white shadow-sm" : "px-3 py-1 rounded-lg text-xs font-bold text-slate-400";
             loadEvents();
@@ -180,30 +164,25 @@
                 const q = query(collection(db, "events"), where("status", "==", "active"));
                 const snap = await getDocs(q);
                 list.innerHTML = '';
-                if (snap.empty) {
-                    list.innerHTML = `<p class="col-span-3 text-center text-slate-400 italic">${currentLang === 'ru' ? 'Активных сборов пока нет' : 'Белсенді жиындар жоқ'}</p>`;
-                    return;
-                }
+                if (snap.empty) { list.innerHTML = `<p class="col-span-3 text-center text-slate-400 italic">Сборов пока нет</p>`; return; }
                 snap.forEach(docSnap => {
                     const d = docSnap.data();
-                    // Поддержка полей с точкой (title.kz) или подчеркиванием (title_kz)
-                    const title = currentLang === 'ru' ? (d['title.ru'] || d.title_ru || "Сбор") : (d['title.kz'] || d.title_kz || "Жиын");
-                    const reward = currentLang === 'ru' ? (d['reward_info.ru'] || d.reward_info_ru || "0") : (d['reward_info.kz'] || d.reward_info_kz || "0");
-                    
+                    const title = currentLang === 'ru' ? (d['title.ru'] || d.title_ru) : (d['title.kz'] || d.title_kz);
+                    const reward = currentLang === 'ru' ? (d['reward_info.ru'] || d.reward_info_ru) : (d['reward_info.kz'] || d.reward_info_kz);
                     list.innerHTML += `
                         <div class="bg-white p-8 rounded-[2.5rem] border border-emerald-100 shadow-sm hover:shadow-md transition">
                             <div class="text-emerald-500 font-bold text-xs mb-3 uppercase tracking-widest">${d.date || '14.05'}</div>
-                            <h4 class="font-black text-xl mb-4">${title}</h4>
+                            <h4 class="font-black text-xl mb-4">${title || 'Сбор'}</h4>
                             <div class="bg-emerald-50 p-4 rounded-2xl flex justify-between items-center italic">
                                 <span class="text-xs font-bold text-emerald-800 uppercase">COINS</span>
-                                <span class="font-black text-emerald-600">${reward}</span>
+                                <span class="font-black text-emerald-600">${reward || '0'}</span>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
             } catch (e) { console.error(e); }
         }
 
+        // РЕГИСТРАЦИЯ
         document.getElementById('auth-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('reg-email').value;
@@ -211,19 +190,27 @@
             const name = document.getElementById('reg-name').value;
             try {
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
-                await setDoc(doc(db, "users", res.user.uid), { firstName: name || "User", coins: 0 });
+                await setDoc(doc(db, "users", res.user.uid), { firstName: name || "Ученик", coins: 0, rating: 0 });
                 toggleModal(false);
-            } catch (err) { alert("Ошибка: " + err.message); }
+                document.getElementById('successModal').classList.add('active');
+            } catch (err) { alert("Ошибка Firebase: " + err.message); }
         });
 
+        // СЛУШАТЕЛЬ СОСТОЯНИЯ (ПРОФИЛЬ)
         onAuthStateChanged(auth, async (user) => {
+            const authBtn = document.getElementById('auth-btn');
+            const qrContainer = document.getElementById('qrcode');
             if (user) {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if (userDoc.exists()) {
-                    document.getElementById('user-balance').innerText = userDoc.data().coins || 0;
-                    document.getElementById('auth-btn').innerText = "Профиль";
-                    document.getElementById('qrcode').innerHTML = "";
-                    new QRCode(document.getElementById("qrcode"), { text: user.uid, width: 160, height: 160, colorDark : "#065f46" });
+                    const d = userDoc.data();
+                    document.getElementById('user-balance').innerText = d.coins || 0;
+                    document.getElementById('user-rating').innerText = d.rating || "---";
+                    document.getElementById('rating-block').classList.remove('hidden');
+                    authBtn.innerHTML = `<i class="fas fa-circle-user mr-2 text-emerald-500"></i> ${d.firstName}`;
+                    authBtn.onclick = null;
+                    qrContainer.innerHTML = "";
+                    new QRCode(qrContainer, { text: user.uid, width: 180, height: 180, colorDark : "#065f46" });
                 }
             }
         });
