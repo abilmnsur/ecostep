@@ -120,14 +120,16 @@
         import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // ТВОИ КЛЮЧИ ТУТ
-        const firebaseConfig = {
-            apiKey: "ТВОЙ_КЛЮЧ",
-            authDomain: "ecostep-dfc99.firebaseapp.com",
-            projectId: "ecostep-dfc99",
-            storageBucket: "ecostep-dfc99.appspot.com",
-            messagingSenderId: "ID",
-            appId: "APP_ID"
-        };
+      const firebaseConfig = {
+  apiKey: "AIzaSyBGBtCmbJ_c54hsomEEFT5UlIC-ax3K7mI",
+  authDomain: "ecostep-dfc99.firebaseapp.com",
+  databaseURL: "https://ecostep-dfc99-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "ecostep-dfc99",
+  storageBucket: "ecostep-dfc99.firebasestorage.app",
+  messagingSenderId: "702037270996",
+  appId: "1:702037270996:web:3fb011189b82f76f4fb641",
+  measurementId: "G-6EBV1M5ECZ"
+};
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
