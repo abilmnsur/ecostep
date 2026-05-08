@@ -175,17 +175,19 @@
                     </button>
                 </div>
             </div>
-                
+
             <div id="user-profile" class="hidden space-y-8 py-4">
                 <div class="text-center space-y-2">
-                    <p class="text-slate-400 font-bold text-xs uppercase tracking-widest" data-key="prof_bal">Твой баланс</p>
-                    <p class="text-6xl font-black text-emerald-500"><span id="display-coins">0</span> 🌿</p>
-                    <p id="display-name" class="text-xl font-bold text-slate-800 pt-2"></p>
+                    <p class="text-emerald-500 font-bold text-xs uppercase tracking-widest" data-key="success_title">Добро пожаловать!</p>
+                    <p class="text-6xl font-black text-slate-900"><span id="display-coins">0</span> <span class="text-emerald-500 text-4xl font-black">🌿</span></p>
+                    <p id="display-name" class="text-xl font-bold text-slate-500 pt-2"></p>
                 </div>
-                <div class="bg-slate-50 p-6 rounded-[2.5rem] border-2 border-dashed border-slate-200">
-                    <div id="qrcode" class="qr-container flex justify-center"></div>
-                    <p class="text-center text-[10px] text-slate-400 mt-4 font-bold uppercase tracking-widest" data-key="prof_hint">Покажи этот код члену фракции экологии</p>
+                
+                <div class="bg-emerald-50 p-6 rounded-[2.5rem] border-2 border-dashed border-emerald-200">
+                    <div id="qrcode" class="qr-container flex justify-center bg-white p-4 rounded-3xl"></div>
+                    <p class="text-center text-[10px] text-emerald-600 mt-6 font-bold uppercase tracking-widest" data-key="prof_hint">Покажи этот код члену фракции экологии</p>
                 </div>
+
                 <button onclick="logout()" class="w-full text-slate-400 font-bold py-2 text-sm hover:text-red-500 transition" data-key="prof_logout">Выйти из аккаунта</button>
             </div>
         </div>
