@@ -1,193 +1,116 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoStep — Эко-Платформа</title>
+    <title>EcoStep — Твой вклад в экологию</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
-        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
-        .qr-container canvas, .qr-container img { margin: 0 auto; border-radius: 1rem; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); }
+        .eco-gradient { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .modal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .scale-in { animation: scaleIn 0.3s ease-out; }
+        @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
 
-    <nav class="fixed w-full z-50 glass-card border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-200">
-                    <i class="fas fa-leaf text-white"></i>
-                </div>
-                <span class="text-xl font-black tracking-tighter text-emerald-600">EcoStep</span>
+    <nav class="fixed top-0 w-full z-50 glass border-b border-emerald-100">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                <i class="fas fa-leaf text-emerald-500 text-2xl"></i>
+                <span class="text-2xl font-extrabold text-emerald-600 italic tracking-tighter">EcoStep</span>
             </div>
-            <div class="hidden md:flex gap-8 font-bold text-sm uppercase tracking-widest text-slate-500">
-                <a href="#about" class="hover:text-emerald-500 transition" data-key="nav_about">О проекте</a>
-                <a href="#steps" class="hover:text-emerald-500 transition" data-key="nav_steps">Как это работает</a>
-                <a href="#events" class="hover:text-emerald-500 transition" data-key="nav_events">Мероприятия</a>
+            
+            <div class="hidden md:flex gap-8 font-semibold text-slate-600">
+                <a href="#about" data-key="nav_about" class="hover:text-emerald-500 transition">О проекте</a>
+                <a href="#steps" data-key="nav_steps" class="hover:text-emerald-500 transition">Как это работает</a>
+                <a href="#events-section" data-key="nav_events" class="hover:text-emerald-500 transition">Мероприятия</a>
             </div>
+
             <div class="flex items-center gap-4">
-                <button onclick="toggleLang()" id="lang-btn" class="text-xs font-black border-2 border-slate-200 px-3 py-1 rounded-xl hover:bg-slate-100 transition">KZ</button>
-                <button onclick="openModal()" class="bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold hover:bg-emerald-600 transition shadow-xl" data-key="nav_cabinet">
-                    Личный кабинет
+                <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                    <button id="btn-ru" onclick="changeLang('ru')" class="px-3 py-1 rounded-lg text-xs font-bold bg-white shadow-sm">RU</button>
+                    <button id="btn-kz" onclick="changeLang('kz')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-400">KZ</button>
+                </div>
+                <button id="auth-btn" onclick="toggleModal(true)" data-key="btn_auth" class="eco-gradient text-white px-5 py-2 rounded-xl font-bold shadow-lg flex items-center gap-2">
+                    <span>Войти</span>
                 </button>
             </div>
         </div>
     </nav>
-
-    <section class="pt-32 pb-20 px-6">
-        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-            <div class="space-y-8">
-                <h1 class="text-6xl md:text-7xl font-black leading-[0.9] tracking-tight">
-                    <span data-key="hero_1">Твои отходы —</span> <span class="text-emerald-500" data-key="hero_2">инвестиция</span>.
-                </h1>
-                <p class="text-xl text-slate-500 max-w-lg leading-relaxed" data-key="hero_desc">
-                    Первая школьная эко-платформа, где твои правильные привычки превращаются в цифровую валюту.
-                </p>
-                <div class="flex gap-4">
-                    <button onclick="openModal()" class="bg-emerald-500 text-white px-8 py-4 rounded-3xl font-black text-lg shadow-2xl shadow-emerald-200 hover:scale-105 transition" data-key="btn_join">Присоединиться</button>
-                    <a href="#steps" class="bg-white border-2 border-slate-200 px-8 py-4 rounded-3xl font-black text-lg hover:bg-slate-50 transition flex items-center gap-2" data-key="btn_more">Узнать больше</a>
+    
+    <header class="pt-44 pb-20 px-6">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+            <div class="space-y-8 text-center lg:text-left">
+                <h1 class="text-5xl md:text-6xl font-black leading-tight" data-key="hero_title">Твои отходы — <br><span class="text-emerald-500 uppercase">инвестиция.</span></h1>
+                <p class="text-xl text-slate-500 font-medium" data-key="hero_desc">EcoStep — сдавай вторсырье в школе и получай коины на реальные покупки.</p>
+                <div class="flex justify-center lg:justify-start">
+                    <button onclick="toggleModal(true)" class="bg-slate-900 text-white px-10 py-5 rounded-2xl font-bold flex items-center gap-3 hover:bg-emerald-600 transition shadow-2xl group">
+                        <span data-key="btn_start">Участвовать</span>
+                        <i class="fas fa-user-plus group-hover:scale-110 transition"></i>
+                    </button>
                 </div>
             </div>
-            <div class="relative">
-                <div class="bg-emerald-100 rounded-[4rem] aspect-square flex items-center justify-center overflow-hidden">
-                    <i class="fas fa-recycle text-[15rem] text-emerald-500 opacity-20 rotate-12"></i>
+
+            <div class="relative flex justify-center lg:justify-end">
+                <div class="relative glass border-2 border-white p-10 rounded-[3rem] shadow-2xl text-center w-full max-w-sm">
+                    <div id="qrcode" class="flex justify-center mb-6 p-4 bg-white rounded-3xl mx-auto w-48 h-48 items-center border shadow-inner transition-all duration-700 overflow-hidden">
+                        <i class="fas fa-qrcode text-slate-100 text-7xl"></i>
+                    </div>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest" data-key="balance_label">Баланс коинов</p>
+                    <div class="text-5xl font-black text-slate-800 mt-2"><span id="user-balance">0</span> <span class="text-emerald-500 text-3xl">🌿</span></div>
+                    
+                    <div id="rating-block" class="hidden border-t border-slate-100 mt-6 pt-4">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Твой рейтинг</p>
+                        <p class="font-black text-slate-700 mt-1"><i class="fas fa-trophy text-amber-400 mr-1"></i> <span id="user-rating">---</span> место</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+    </header>
 
-    <section id="about" class="py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-6 text-center mb-16">
-            <h2 class="text-4xl font-black mb-4" data-key="about_title">Делаем мир чище вместе</h2>
-            <p class="text-slate-500 max-w-2xl mx-auto leading-relaxed" data-key="about_desc">
-                EcoStep помогает школам организовать удобный сбор вторсырья, вовлекая учеников через геймификацию и систему поощрений.
-            </p>
-        </div>
-        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
-            <div class="p-10 bg-slate-50 rounded-[3rem] border border-slate-100">
-                <div class="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center mb-6 text-white text-xl shadow-lg">
-                    <i class="fas fa-seedling"></i>
-                </div>
-                <h3 class="text-xl font-black mb-4" data-key="card1_t">Экология</h3>
-                <p class="text-slate-500 text-sm leading-relaxed" data-key="card1_d">Снижаем экологический след школы и учим правильно сортировать мусор.</p>
-            </div>
-            <div class="p-10 bg-slate-50 rounded-[3rem] border border-slate-100">
-                <div class="w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center mb-6 text-white text-xl shadow-lg">
-                    <i class="fas fa-coins"></i>
-                </div>
-                <h3 class="text-xl font-black mb-4" data-key="card2_t">Коины</h3>
-                <p class="text-slate-500 text-sm leading-relaxed" data-key="card2_d">За каждый сданный килограмм бумаги или пластика ты получаешь 🌿 EcoCoins.</p>
-            </div>
-            <div class="p-10 bg-slate-50 rounded-[3rem] border border-slate-100">
-                <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center mb-6 text-white text-xl shadow-lg">
-                    <i class="fas fa-gift"></i>
-                </div>
-                <h3 class="text-xl font-black mb-4" data-key="card3_t">Призы</h3>
-                <p class="text-slate-500 text-sm leading-relaxed" data-key="card3_d">Трать накопленные коины на еду в столовой или дополнительные баллы.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="steps" class="py-24 bg-slate-900 text-white rounded-[5rem] mx-4 mb-20 overflow-hidden relative">
+    <section id="events-section" class="py-24 bg-slate-50 border-y border-slate-200">
         <div class="max-w-7xl mx-auto px-6">
-            <h2 class="text-4xl font-black text-center mb-16" data-key="steps_title">Твой путь к успеху</h2>
-            <div class="grid md:grid-cols-3 gap-16 relative">
-                <div class="space-y-4 text-center">
-                    <span class="text-emerald-500 font-black text-6xl opacity-30">01</span>
-                    <h3 class="text-2xl font-bold" data-key="s1_t">Собери вторсырье</h3>
-                    <p class="text-slate-400" data-key="s1_d">Пластиковые бутылки, макулатура или алюминиевые банки.</p>
+            <h2 class="text-4xl font-black mb-12 text-center lg:text-left" data-key="events_title">Актуальные сборы</h2>
+            <div id="events-list" class="grid md:grid-cols-3 gap-8">
                 </div>
-                <div class="space-y-4 text-center">
-                    <span class="text-emerald-500 font-black text-6xl opacity-30">02</span>
-                    <h3 class="text-2xl font-bold" data-key="s2_t">Сканируй QR</h3>
-                    <p class="text-slate-400" data-key="s2_d">Покажи свой код члену фракции экологии.</p>
-                </div>
-                <div class="space-y-4 text-center">
-                    <span class="text-emerald-500 font-black text-6xl opacity-30">03</span>
-                    <h3 class="text-2xl font-bold" data-key="s3_t">Получи коины</h3>
-                    <p class="text-slate-400" data-key="s3_d">Баланс обновится мгновенно. Трать их с удовольствием!</p>
-                </div>
-            </div>
         </div>
     </section>
 
-    <section id="events" class="py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-6">
-            <h2 class="text-4xl font-black mb-12" data-key="nav_events">Мероприятия</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="group bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100 hover:border-emerald-500 transition-all duration-300">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center">
-                            <i class="fas fa-battery-full text-xl"></i>
-                        </div>
-                        <span class="text-slate-400 font-bold text-sm">14.05.26</span>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3" data-key="ev1_t">Сбор батареек</h3>
-                    <p class="text-slate-500 text-sm mb-6" data-key="ev1_d">Сдавай старые батарейки! 1 шт = 5 EcoCoins. Спасем почву вместе.</p>
-                    <span class="inline-block bg-orange-100 text-orange-600 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest" data-key="ev_active">Активно</span>
-                </div>
-                <div class="group bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100 hover:border-emerald-500 transition-all duration-300">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
-                            <i class="fas fa-book text-xl"></i>
-                        </div>
-                        <span class="text-slate-400 font-bold text-sm">20.05.26</span>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3" data-key="ev2_t">Макулатура</h3>
-                    <p class="text-slate-500 text-sm mb-6" data-key="ev2_d">Приноси старые газеты и тетради. 1 кг бумаги = 10 EcoCoins.</p>
-                    <span class="inline-block bg-slate-200 text-slate-500 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest" data-key="ev_soon">Скоро</span>
-                </div>
-                <div class="group bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100 hover:border-emerald-500 transition-all duration-300">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
-                            <i class="fas fa-broom text-xl"></i>
-                        </div>
-                        <span class="text-slate-400 font-bold text-sm">01.06.26</span>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3" data-key="ev3_t">Эко-Субботник</h3>
-                    <p class="text-slate-500 text-sm mb-6" data-key="ev3_d">Приходи на уборку школьной территории. Участникам 50 EcoCoins.</p>
-                    <span class="inline-block bg-slate-200 text-slate-500 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest" data-key="ev_soon">Скоро</span>
-                </div>
-            </div>
+    <div id="regModal" class="modal px-6">
+        <div class="bg-white w-full max-w-md rounded-[3rem] p-10 relative shadow-2xl scale-in">
+            <button onclick="toggleModal(false)" class="absolute top-8 right-8 text-slate-300 hover:text-black transition"><i class="fas fa-times text-2xl"></i></button>
+            <h3 class="text-3xl font-black mb-8" data-key="modal_head">Регистрация</h3>
+            <form id="auth-form" class="space-y-4">
+                <input type="text" id="reg-name" data-placeholder="ph_name" placeholder="Твое имя" class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
+                <input type="email" id="reg-email" placeholder="Email" required class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
+                <input type="password" id="reg-password" data-placeholder="ph_pass" placeholder="Пароль (от 6 символов)" required class="bg-slate-50 border border-slate-100 p-4 rounded-2xl w-full outline-none focus:border-emerald-500 font-medium">
+                <button type="submit" class="eco-gradient text-white w-full py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:shadow-emerald-500/40 transition-all active:scale-95" data-key="btn_submit">Войти / Создать</button>
+            </form>
         </div>
-    </section>
+    </div>
 
-    <div id="auth-modal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-[3rem] shadow-2xl overflow-hidden relative p-8">
-            <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-900">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-           <div class="space-y-4">
-    <input type="text" id="user-name" data-placeholder="ph_name" placeholder="Твое имя" class="w-full p-5 bg-slate-100 rounded-3xl border-none outline-none font-bold">
-    <input type="email" id="user-email" data-placeholder="ph_email" placeholder="Почта (Email)" class="w-full p-5 bg-slate-100 rounded-3xl border-none outline-none font-bold">
-    <input type="password" id="user-password" data-placeholder="ph_pass" placeholder="Пароль" class="w-full p-5 bg-slate-100 rounded-3xl border-none outline-none font-bold">
-    <button id="auth-btn" class="w-full bg-slate-900 text-white py-5 rounded-3xl font-black text-lg hover:bg-emerald-600 transition shadow-xl" data-key="reg_btn">
-        Войти / Создать
-    </button>
-</div>
+    <div id="successModal" class="modal px-6">
+        <div class="bg-white w-full max-w-sm rounded-[3rem] p-10 text-center shadow-2xl scale-in border-4 border-emerald-50">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check text-3xl"></i>
             </div>
-            <div id="user-profile" class="hidden space-y-8 py-4">
-                <div class="text-center space-y-2">
-                    <p class="text-slate-400 font-bold text-xs uppercase tracking-widest" data-key="prof_bal">Твой баланс</p>
-                    <p class="text-6xl font-black text-emerald-500"><span id="display-coins">0</span> 🌿</p>
-                    <p id="display-name" class="text-xl font-bold text-slate-800 pt-2"></p>
-                </div>
-                <div class="bg-slate-50 p-6 rounded-[2.5rem] border-2 border-dashed border-slate-200">
-                    <div id="qrcode" class="qr-container flex justify-center"></div>
-                    <p class="text-center text-[10px] text-slate-400 mt-4 font-bold uppercase tracking-widest" data-key="prof_hint">Покажи этот код члену фракции экологии</p>
-                </div>
-                <button onclick="logout()" class="w-full text-slate-400 font-bold py-2 text-sm hover:text-red-500 transition" data-key="prof_logout">Выйти из аккаунта</button>
-            </div>
+            <h3 class="text-2xl font-black mb-2" data-key="success_title">Готово!</h3>
+            <p class="text-slate-500 mb-8" data-key="success_text">Твой профиль EcoStep создан. Теперь ты можешь копить баллы.</p>
+            <button onclick="document.getElementById('successModal').classList.remove('active')" class="eco-gradient text-white w-full py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg">Отлично</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBGBtCmbJ_c54hsomEEFT5UlIC-ax3K7mI",
@@ -201,151 +124,148 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getFirestore(app);
 
         const translations = {
             ru: {
-                nav_about: "О проекте", nav_steps: "Как это работает", nav_events: "Мероприятия", nav_cabinet: "Личный кабинет",
-                hero_1: "Твои отходы —", hero_2: "инвестиция", hero_desc: "Первая школьная эко-платформа, где твои правильные привычки превращаются в цифровую валюту.",
-                btn_join: "Присоединиться", btn_more: "Узнать больше",
-                about_title: "Делаем мир чище вместе", about_desc: "EcoStep помогает школам организовать удобный сбор вторсырья.",
-                card1_t: "Экология", card1_d: "Снижаем экологический след школы.",
-                card2_t: "Коины", card2_d: "За каждый сданный кг получаешь 🌿 EcoCoins.",
-                card3_t: "Призы", card3_d: "Трать накопленные коины на еду в столовой.",
-                steps_title: "Твой путь к успеху",
-                s1_t: "Собери вторсырье", s1_d: "Пластиковые бутылки, макулатура или банки.",
-                s2_t: "Сканируй QR", s2_d: "Покажи свой код члену фракции экологии.",
-                s3_t: "Получи коины", s3_d: "Баланс обновится мгновенно.",
-                ev1_t: "Сбор батареек", ev1_d: "Сдавай старые батарейки! 1 шт = 5 EcoCoins. Спасем почву вместе.",
-                ev2_t: "Макулатура", ev2_d: "Приноси старые газеты и тетради. 1 кг бумаги = 10 EcoCoins.",
-                ev3_t: "Эко-Субботник", ev3_d: "Уборка территории. Участникам 50 EcoCoins.",
-                ev_active: "Активно", ev_soon: "Скоро",
-                reg_title: "Вход в систему", reg_desc: "Введи данные, чтобы увидеть свой баланс",
-                ph_name: "Твое имя", ph_phone: "Номер телефона", reg_btn: "Войти / Создать",
-                prof_bal: "Твой баланс", prof_hint: "Покажи этот код члену фракции экологии", prof_logout: "Выйти из аккаунта"
+                nav_about: "О проекте", nav_steps: "Как это работает", nav_events: "Мероприятия",
+                btn_auth: "Войти", hero_title: 'Твои отходы — <br><span class="text-emerald-500 uppercase">инвестиция.</span>',
+                hero_desc: "EcoStep — сдавай вторсырье в школе и получай коины на реальные покупки.",
+                btn_start: "Участвовать", balance_label: "Баланс коинов", events_title: "Актуальные сборы",
+                modal_head: "Вход / Регистрация", btn_submit: "Войти / Создать", success_title: "Готово!",
+                success_text: "Твой профиль создан. Теперь ты можешь копить баллы.",
+                ph_name: "Твое имя", ph_pass: "Пароль (от 6 символов)"
             },
-            kk: {
-                nav_about: "Жоба туралы", nav_steps: "Жұмыс принципі", nav_events: "Іс-шаралар", nav_cabinet: "Жеке кабинет",
-                hero_1: "Сенің қалдықтарың —", hero_2: "инвестиция", hero_desc: "Сенің дұрыс әдеттерің цифрлық валютаға айналатын алғашқы мектептік эко-платформа.",
-                btn_join: "Қосылу", btn_more: "Толығырақ",
-                about_title: "Әлемді бірге тазартамыз", about_desc: "EcoStep мектептерге қайталама шикізатты жинауды ұйымдастыруға көмектеседі.",
-                card1_t: "Экология", card1_d: "Мектептің экологиялық ізін азайтуды үйретеміз.",
-                card2_t: "Коиндар", card2_d: "Әрбір өткізілген келі үшін 🌿 EcoCoins аласың.",
-                card3_t: "Сыйлықтар", card3_d: "Жиналған коиндарды асханаға жұмсаңыз.",
-                steps_title: "Сенің табысқа жолың",
-                s1_t: "Шикізат жина", s1_d: "Пластик бөтелкелер, макулатура немесе банкалар.",
-                s2_t: "QR-кодты көрсет", s2_d: "Кодыңызды экология фракциясының мүшесіне көрсетіңіз.",
-                s3_t: "Коиндарды ал", s3_d: "Баланс бірден жаңартылады. Оларды жұмса!",
-                ev1_t: "Батарея жинау", ev1_d: "Ескі батареяларды өткіз! 1 дана = 5 EcoCoins. Топырақты бірге сақтайық.",
-                ev2_t: "Макулатура", ev2_d: "Қағаз әкеліңіз. 1 кг = 10 EcoCoins.",
-                ev3_t: "Эко-Сенбілік", ev3_d: "Аумақты тазалау. Қатысушыларға 50 EcoCoins.",
-                ev_active: "Белсенді", ev_soon: "Жақында",
-                reg_title: "Жүйеге кіру", reg_desc: "Балансты көру үшін деректерді енгізіңіз",
-                ph_name: "Есіміңіз", ph_phone: "Телефон нөмірі", reg_btn: "Кіру / Тіркелу",
-                prof_bal: "Сенің балансың", prof_hint: "Кодты экология фракциясының мүшесіне көрсетіңіз", prof_logout: "Шығу"
+            kz: {
+                nav_about: "Жоба туралы", nav_steps: "Бұл қалай жұмыс істейді", nav_events: "Шаралар",
+                btn_auth: "Кіру", hero_title: 'Сенің қалдықтарың — <br><span class="text-emerald-500 uppercase">инвестиция.</span>',
+                hero_desc: "EcoStep — мектепте қайталама шикізат тапсырып, нақты заттарға коиндар ал.",
+                btn_start: "Қатысу", balance_label: "Коиндар балансы", events_title: "Белсенді жиындар",
+                modal_head: "Кіру / Тіркелу", btn_submit: "Кіру / Тіркелу", success_title: "Дайын!",
+                success_text: "Профиліңіз жасалды. Енді ұпай жинай аласыз.",
+                ph_name: "Есіміңіз", ph_pass: "Құпия сөз (6 таңбадан кем емес)"
             }
         };
 
-        let currentLang = localStorage.getItem('ecoLang') || 'ru';
-        window.toggleLang = () => {
-            currentLang = currentLang === 'ru' ? 'kk' : 'ru';
-            localStorage.setItem('ecoLang', currentLang);
-            updateLanguage();
-        };
-        function updateLanguage() {
-            const langBtn = document.getElementById('lang-btn');
-            langBtn.innerText = currentLang === 'ru' ? 'KZ' : 'RU';
+        let currentLang = 'ru';
+
+        window.toggleModal = (show) => document.getElementById('regModal').classList.toggle('active', show);
+        
+        window.changeLang = (lang) => {
+            currentLang = lang;
             document.querySelectorAll('[data-key]').forEach(el => {
                 const key = el.getAttribute('data-key');
-                if (translations[currentLang][key]) el.innerText = translations[currentLang][key];
+                el.innerHTML = translations[lang][key] || el.innerHTML;
             });
             document.querySelectorAll('[data-placeholder]').forEach(el => {
                 const key = el.getAttribute('data-placeholder');
-                if (translations[currentLang][key]) el.placeholder = translations[currentLang][key];
+                el.placeholder = translations[lang][key] || el.placeholder;
             });
-        }
-        updateLanguage();
-
-        let currentUser = localStorage.getItem('ecoUserId');
-        window.openModal = () => {
-            document.getElementById('auth-modal').classList.remove('hidden');
-            if (currentUser) loadProfile(currentUser);
+            document.getElementById('btn-ru').className = lang === 'ru' ? "px-3 py-1 rounded-lg text-xs font-bold bg-white shadow-sm" : "px-3 py-1 rounded-lg text-xs font-bold text-slate-400";
+            document.getElementById('btn-kz').className = lang === 'kz' ? "px-3 py-1 rounded-lg text-xs font-bold bg-white shadow-sm" : "px-3 py-1 rounded-lg text-xs font-bold text-slate-400";
+            loadEvents();
         };
-        window.closeModal = () => document.getElementById('auth-modal').classList.add('hidden');
 
-       // --- ОБНОВЛЕННАЯ ЛОГИКА КНОПКИ ---
-        document.getElementById('auth-btn').onclick = async () => {
-            const nameEl = document.getElementById('user-name');
-            const emailEl = document.getElementById('user-email');
-            const passEl = document.getElementById('user-password');
-
-            const name = nameEl.value;
-            const email = emailEl.value;
-            const pass = passEl.value;
-
-            // Проверка на заполнение полей
-            if (!email || !pass) {
-                alert(currentLang === 'ru' ? "Заполни почту и пароль" : "Пошта мен құпия сөзді толтырыңыз");
-                return;
-            }
-
-            // Создаем безопасный ID для Firebase (без точек и @)
-            const userId = email.replace(/[.@]/g, '_'); 
+        // ЗАГРУЗКА МЕРОПРИЯТИЙ (ВКЛЮЧАЯ БАТАРЕЙКИ)
+        async function loadEvents() {
+            const list = document.getElementById('events-list');
+            list.innerHTML = '';
             
+            // Сначала попробуем загрузить из Firebase, если пусто - покажем дефолт (батарейки)
             try {
-                const userRef = doc(db, "users", userId);
-                const userSnap = await getDoc(userRef);
-
-                if (userSnap.exists()) {
-                    const userData = userSnap.data();
-                    // Сверяем пароль
-                    if (userData.password !== pass) {
-                        alert(currentLang === 'ru' ? "Неверный пароль" : "Құпия сөз қате");
-                        return;
-                    }
+                const q = query(collection(db, "events"), where("status", "==", "active"));
+                const snap = await getDocs(q);
+                
+                if (snap.empty) {
+                    // Тот самый сбор батареек, если в базе пусто
+                    const defaultEvent = {
+                        date: "14.05.26",
+                        title: currentLang === 'ru' ? "Сбор батареек" : "Батарея жинау",
+                        reward: "1 шт = 5 EcoCoins"
+                    };
+                    renderEventCard(defaultEvent);
                 } else {
-                    // Если пользователя нет — создаем нового
-                    if (!name) {
-                        alert(currentLang === 'ru' ? "Введите имя для регистрации" : "Тіркелу үшін есімді енгізіңіз");
-                        return;
-                    }
-                    await setDoc(userRef, { 
-                        firstName: name, 
-                        email: email, 
-                        password: pass, 
-                        coins: 0 
+                    snap.forEach(docSnap => {
+                        const d = docSnap.data();
+                        renderEventCard({
+                            date: d.date || "Скоро",
+                            title: currentLang === 'ru' ? (d.title_ru || d['title.ru']) : (d.title_kz || d['title.kz']),
+                            reward: currentLang === 'ru' ? (d.reward_ru || d['reward.ru']) : (d.reward_kz || d['reward.kz'])
+                        });
                     });
                 }
-                
-                // Сохраняем вход в браузере и обновляем профиль
-                localStorage.setItem('ecoUserId', userId);
-                currentUser = userId;
-                loadProfile(userId);
-            } catch (error) {
-                console.error("Firebase Error:", error);
-                alert("Ошибка подключения к базе. Проверь интернет или настройки Firebase.");
-            }
-        };
-
-        function loadProfile(userId) {
-            document.getElementById('register-form').classList.add('hidden');
-            document.getElementById('user-profile').classList.remove('hidden');
-            document.getElementById('qrcode').innerHTML = "";
-            new QRCode(document.getElementById("qrcode"), {
-                text: userId, width: 200, height: 200, colorDark : "#0f172a", colorLight : "#f8fafc"
-            });
-            onSnapshot(doc(db, "users", userId), (doc) => {
-                const data = doc.data();
-                if (data) {
-                    document.getElementById('display-name').innerText = data.firstName;
-                    document.getElementById('display-coins').innerText = data.coins;
-                }
-            });
+            } catch (e) { console.error(e); }
         }
-        window.logout = () => {
-            localStorage.removeItem('ecoUserId');
-            location.reload();
-        };
+
+        function renderEventCard(ev) {
+            document.getElementById('events-list').innerHTML += `
+                <div class="bg-white p-8 rounded-[2.5rem] border border-emerald-100 shadow-sm hover:shadow-md transition">
+                    <div class="text-emerald-500 font-bold text-xs mb-3 uppercase tracking-widest">${ev.date}</div>
+                    <h4 class="font-black text-xl mb-4">${ev.title}</h4>
+                    <div class="bg-emerald-50 p-4 rounded-2xl flex justify-between items-center italic">
+                        <span class="text-xs font-bold text-emerald-800 uppercase">COINS</span>
+                        <span class="font-black text-emerald-600">${ev.reward}</span>
+                    </div>
+                </div>`;
+        }
+
+        // ЛОГИКА ВХОДА И РЕГИСТРАЦИИ (Firebase Auth)
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-password').value;
+            const name = document.getElementById('reg-name').value;
+
+            try {
+                // Пытаемся войти
+                await signInWithEmailAndPassword(auth, email, pass);
+                toggleModal(false);
+            } catch (err) {
+                // Если пользователя нет — регистрируем
+                if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+                    try {
+                        const res = await createUserWithEmailAndPassword(auth, email, pass);
+                        await setDoc(doc(db, "users", res.user.uid), { 
+                            firstName: name || "Ученик", 
+                            email: email,
+                            coins: 0, 
+                            rating: 0 
+                        });
+                        toggleModal(false);
+                        document.getElementById('successModal').classList.add('active');
+                    } catch (regErr) {
+                        alert("Ошибка регистрации: " + regErr.message);
+                    }
+                } else {
+                    alert("Ошибка входа: " + err.message);
+                }
+            }
+        });
+
+        // СЛУШАТЕЛЬ ПРОФИЛЯ (Real-time через onSnapshot)
+        onAuthStateChanged(auth, (user) => {
+            const authBtn = document.getElementById('auth-btn');
+            const qrContainer = document.getElementById('qrcode');
+            
+            if (user) {
+                onSnapshot(doc(db, "users", user.uid), (docSnap) => {
+                    if (docSnap.exists()) {
+                        const d = docSnap.data();
+                        document.getElementById('user-balance').innerText = d.coins || 0;
+                        document.getElementById('user-rating').innerText = d.rating || "---";
+                        document.getElementById('rating-block').classList.remove('hidden');
+                        authBtn.innerHTML = `<i class="fas fa-circle-user mr-2 text-emerald-500"></i> ${d.firstName}`;
+                        authBtn.onclick = null;
+                        
+                        qrContainer.innerHTML = "";
+                        new QRCode(qrContainer, { text: user.uid, width: 180, height: 180, colorDark : "#065f46" });
+                    }
+                });
+            }
+        });
+
+        loadEvents();
     </script>
 </body>
 </html>
