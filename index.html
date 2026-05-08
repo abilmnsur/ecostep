@@ -273,17 +273,58 @@
         };
         window.closeModal = () => document.getElementById('auth-modal').classList.add('hidden');
 
+       // --- ОБНОВЛЕННАЯ ЛОГИКА КНОПКИ ---
         document.getElementById('auth-btn').onclick = async () => {
-            const name = document.getElementById('user-name').value;
-            const phone = document.getElementById('user-phone').value;
-            if (!name || !phone) return alert(currentLang === 'ru' ? "Заполни все поля" : "Барлық өрістерді толтырыңыз");
-            const userId = phone.replace(/\D/g, '');
-            const userRef = doc(db, "users", userId);
-            const userSnap = await getDoc(userRef);
-            if (!userSnap.exists()) await setDoc(userRef, { firstName: name, phone: phone, coins: 0 });
-            localStorage.setItem('ecoUserId', userId);
-            currentUser = userId;
-            loadProfile(userId);
+            const nameEl = document.getElementById('user-name');
+            const emailEl = document.getElementById('user-email');
+            const passEl = document.getElementById('user-password');
+
+            const name = nameEl.value;
+            const email = emailEl.value;
+            const pass = passEl.value;
+
+            // Проверка на заполнение полей
+            if (!email || !pass) {
+                alert(currentLang === 'ru' ? "Заполни почту и пароль" : "Пошта мен құпия сөзді толтырыңыз");
+                return;
+            }
+
+            // Создаем безопасный ID для Firebase (без точек и @)
+            const userId = email.replace(/[.@]/g, '_'); 
+            
+            try {
+                const userRef = doc(db, "users", userId);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    // Сверяем пароль
+                    if (userData.password !== pass) {
+                        alert(currentLang === 'ru' ? "Неверный пароль" : "Құпия сөз қате");
+                        return;
+                    }
+                } else {
+                    // Если пользователя нет — создаем нового
+                    if (!name) {
+                        alert(currentLang === 'ru' ? "Введите имя для регистрации" : "Тіркелу үшін есімді енгізіңіз");
+                        return;
+                    }
+                    await setDoc(userRef, { 
+                        firstName: name, 
+                        email: email, 
+                        password: pass, 
+                        coins: 0 
+                    });
+                }
+                
+                // Сохраняем вход в браузере и обновляем профиль
+                localStorage.setItem('ecoUserId', userId);
+                currentUser = userId;
+                loadProfile(userId);
+            } catch (error) {
+                console.error("Firebase Error:", error);
+                alert("Ошибка подключения к базе. Проверь интернет или настройки Firebase.");
+            }
         };
 
         function loadProfile(userId) {
