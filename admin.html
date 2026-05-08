@@ -5,33 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoStep — Терминал</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #0f172a; font-family: sans-serif; }
-        video { width: 100%; height: 100%; object-fit: cover; border-radius: 2rem; }
-        .preview-container { position: relative; width: 100%; aspect-ratio: 1/1; background: #000; border-radius: 2.5rem; overflow: hidden; border: 2px solid #334155; }
+        body { background-color: #0f172a; }
+        #reader video { border-radius: 2.5rem; object-fit: cover; width: 100% !important; }
+        #reader { border: none !important; }
     </style>
 </head>
 <body class="text-white min-h-screen flex flex-col items-center p-4">
 
-    <div class="w-full max-w-md bg-slate-800 p-8 rounded-[3rem] shadow-2xl mt-6">
+    <div class="w-full max-w-md bg-slate-800 p-8 rounded-[3rem] shadow-2xl mt-6 border border-slate-700">
         <div class="flex items-center justify-between mb-6">
-            <span class="font-black text-emerald-400">ECOSTEP ADMIN</span>
+            <span class="font-black text-emerald-400 tracking-widest text-xs">ECOSTEP TERMINAL</span>
             <div id="status-dot" class="w-2 h-2 rounded-full bg-red-500"></div>
         </div>
         
-        <div class="preview-container mb-6">
-            <video id="preview"></video>
-            <div id="camera-overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 z-10">
-                <button onclick="startCamera()" class="bg-emerald-500 px-6 py-3 rounded-2xl font-bold shadow-lg active:scale-95">
-                    ВКЛЮЧИТЬ КАМЕРУ
+        <div class="relative overflow-hidden rounded-[2.5rem] bg-black mb-6 aspect-square border-2 border-slate-700">
+            <div id="reader"></div>
+            <div id="placeholder" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 z-10">
+                <button onclick="initCamera()" class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-2xl font-black shadow-lg transition-all active:scale-95">
+                    ОТКРЫТЬ КАМЕРУ
                 </button>
-                <p class="text-[10px] mt-4 text-slate-500 uppercase tracking-widest">Нажмите для доступа</p>
+                <p id="error-log" class="text-[10px] mt-4 text-slate-500 px-4 text-center lowercase"></p>
             </div>
         </div>
 
-        <div id="user-info" class="hidden space-y-6">
+        <div id="user-info" class="hidden space-y-6 animate-in fade-in duration-500">
             <div class="bg-slate-900/50 p-6 rounded-3xl border border-slate-700 text-center">
                 <p id="customer-name" class="text-xl font-black text-white">---</p>
                 <p class="text-emerald-400 font-bold"><span id="customer-balance">0</span> 🌿</p>
@@ -47,7 +47,7 @@
                 <button onclick="document.getElementById('spend-amount').value='0'" class="bg-slate-700 py-3 rounded-xl font-bold">C</button>
             </div>
             
-            <button id="confirm-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] shadow-xl uppercase tracking-widest">
+            <button id="confirm-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] shadow-xl uppercase tracking-widest text-sm">
                 Списать с баланса
             </button>
             <button onclick="resetScanner()" class="w-full text-slate-500 font-bold py-2 text-xs uppercase">Отмена</button>
@@ -58,9 +58,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ТВОЙ КОНФИГ (ЗАМЕНИ НА СВОЙ)
+        // ТВОИ ДАННЫЕ (УБЕДИСЬ, ЧТО ОНИ ВЕРНЫЕ)
         const firebaseConfig = {
-            apiKey: "ТВОЙ_API_KEY",
+            apiKey: "ВСТАВЬ_API_KEY",
             authDomain: "ecostep-dfc99.firebaseapp.com",
             projectId: "ecostep-dfc99",
             storageBucket: "ecostep-dfc99.appspot.com",
@@ -71,32 +71,44 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let scanner = new Instascan.Scanner({ video: document.getElementById('preview'), mirror: false });
+        let html5QrCode;
         let currentUserId = null;
 
-        // Функция запуска камеры
-        window.startCamera = function() {
-            Instascan.Camera.getCameras().then(function (cameras) {
-                if (cameras.length > 0) {
-                    // Пробуем найти заднюю камеру (обычно последняя в списке)
-                    let backCamera = cameras.find(c => c.name.toLowerCase().includes('back')) || cameras[cameras.length - 1];
-                    scanner.start(backCamera);
-                    document.getElementById('camera-overlay').style.display = 'none';
-                    document.getElementById('status-dot').classList.replace('bg-red-500', 'bg-emerald-500');
-                } else {
-                    alert('Камеры не найдены');
+        window.initCamera = async function() {
+            const errorLog = document.getElementById('error-log');
+            try {
+                // Если сканер уже был создан — очищаем его
+                if (html5QrCode) {
+                    await html5QrCode.stop();
+                    await html5QrCode.clear();
                 }
-            }).catch(function (e) {
-                alert('Ошибка камеры: ' + e);
-            });
+
+                html5QrCode = new Html5Qrcode("reader");
+                
+                const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+                
+                await html5QrCode.start(
+                    { facingMode: "environment" }, 
+                    config, 
+                    onScanSuccess
+                );
+
+                document.getElementById('placeholder').style.display = 'none';
+                document.getElementById('status-dot').classList.replace('bg-red-500', 'bg-emerald-500');
+            } catch (err) {
+                errorLog.innerText = "Ошибка: " + err;
+                console.error(err);
+                // Если задняя камера не найдена, пробуем любую доступную
+                html5QrCode.start({ facingMode: "user" }, { fps: 10, qrbox: 250 }, onScanSuccess);
+            }
         };
 
-        scanner.addListener('scan', async function (content) {
+        async function onScanSuccess(decodedText) {
             if (currentUserId) return;
-            currentUserId = content;
+            currentUserId = decodedText;
             
             try {
-                const userDoc = await getDoc(doc(db, "users", content));
+                const userDoc = await getDoc(doc(db, "users", decodedText));
                 if (userDoc.exists()) {
                     const d = userDoc.data();
                     document.getElementById('customer-name').innerText = d.firstName;
@@ -104,23 +116,24 @@
                     document.getElementById('user-info').classList.remove('hidden');
                     if (navigator.vibrate) navigator.vibrate(100);
                 }
-            } catch (e) { alert("Ошибка базы"); }
-        });
+            } catch (e) { alert("Ошибка Firestore"); }
+        }
 
         window.setAmount = (v) => document.getElementById('spend-amount').value = v;
         window.resetScanner = () => {
             currentUserId = null;
             document.getElementById('user-info').classList.add('hidden');
+            document.getElementById('spend-amount').value = "0";
         };
 
         document.getElementById('confirm-btn').onclick = async () => {
             const amt = parseInt(document.getElementById('spend-amount').value);
-            if (amt <= 0) return;
+            if (amt <= 0 || !currentUserId) return;
             try {
                 await updateDoc(doc(db, "users", currentUserId), { coins: increment(-amt) });
-                alert("Успешно списано!");
+                alert("Списано успешно!");
                 resetScanner();
-            } catch (e) { alert("Ошибка!"); }
+            } catch (e) { alert("Ошибка списания!"); }
         };
     </script>
 </body>
